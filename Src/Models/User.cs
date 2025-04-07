@@ -14,5 +14,14 @@ namespace TallerIDWM_Backend.Src.Models
         public DateOnly BirthDate { get; set; }
         public string Password { get; set; } = string.Empty;
         public bool Active { get; set; }
+
+
+        // Relación uno a uno con Role
+        public int RoleId { get; set; }  
+        public Role Role { get; set; } = null!;
+
+
+        // Relación uno a uno con Direction
+        public Direction Direction { get; set; } = new Direction();
     }
 }

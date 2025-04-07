@@ -7,10 +7,14 @@ namespace TallerIDWM_Backend.Src.Models
 {
     public class Direction
     {
+        public int Id { get; set; }
         public string street { get; set; } = string.Empty;
         public string number { get; set; } = string.Empty;
         public string city { get; set; } = string.Empty;
         public string state { get; set; } = string.Empty;
         public string zipCode { get; set; } = string.Empty;
+
+
+        public User User { get; set; } = new User();
     }
 }
