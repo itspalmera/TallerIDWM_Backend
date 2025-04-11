@@ -14,7 +14,8 @@ namespace TallerIDWM_Backend.Src.Models
         public string state { get; set; } = string.Empty;
         public string zipCode { get; set; } = string.Empty;
 
-
-        public User User { get; set; } = new User();
+        // Relación uno a uno con User
+        public int UserId { get; set; }
+        public User User { get; set; } = null!;
     }
 }

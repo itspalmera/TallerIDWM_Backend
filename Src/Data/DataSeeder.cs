@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TallerIDWM_Backend.Src.Models;
 
@@ -15,10 +17,11 @@ namespace TallerIDWM_Backend.Src.Data
             using (var scope = serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<DataContext>();
+                var context = services.GetRequiredService<DataContext>()
+                    ?? throw new InvalidOperationException("No se pudo obtener el contexto de la base de datos.");
 
                 // Si ya hay usuarios, no hacer nada
-                if (context.Users.Any())
+                if (context.Users.Any() || context.Products.Any())
                     return;
 
                 var faker = new Faker("es");
@@ -30,11 +33,11 @@ namespace TallerIDWM_Backend.Src.Data
                 // Crear administrador fijo
                 var adminUser = new User
                 {
-                    Name = "Admin General",
-                    Email = "admin@tienda.cl",
+                    Name = "Ignacio Mancilla",
+                    Email = "ignacio.mancilla@gmail.com",
                     Phone = "+56 9 1234 5678",
                     BirthDate = new DateOnly(1990, 1, 1),
-                    Password = "Admin123*", // ¡No olvides hashear esto en producción!
+                    Password = "Pa$$word2025", // ¡No olvides hashear esto en producción!
                     Active = true,
                     Role = roleAdmin,
                     Direction = new Direction

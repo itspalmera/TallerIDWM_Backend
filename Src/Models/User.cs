@@ -20,8 +20,7 @@ namespace TallerIDWM_Backend.Src.Models
         public int RoleId { get; set; }  
         public Role Role { get; set; } = null!;
 
-
         // Relación uno a uno con Direction
-        public Direction Direction { get; set; } = new Direction();
+        public Direction Direction { get; set; } = null!;
     }
 }
