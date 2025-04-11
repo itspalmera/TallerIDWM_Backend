@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+
 using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Data
@@ -11,6 +8,7 @@ namespace TallerIDWM_Backend.Src.Data
     {
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
+        public DbSet<Product> Products { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

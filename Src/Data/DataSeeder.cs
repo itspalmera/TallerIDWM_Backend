@@ -74,9 +74,37 @@ namespace TallerIDWM_Backend.Src.Data
                     users.Add(user);
                 }
 
+                var products = new List<Product>();
+
+                // Crear 10 productos aleatorios
+                for (int i = 0; i < 10; i++)
+                {
+                    var product = new Product
+                    {
+                        Title = faker.Commerce.ProductName(),
+                        Description = faker.Commerce.ProductDescription(),
+                        Price = decimal.Parse(faker.Commerce.Price(100, 10000)),
+                        Stock = faker.Random.Int(0, 100),
+                        Category = faker.Commerce.Categories(1).First(),
+                        Brand = faker.Company.CompanyName(),
+                        IsNew = faker.Random.Bool(),
+                        Urls =
+                        [
+                            faker.Image.PicsumUrl(),
+                            faker.Image.PicsumUrl()
+                        ],
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = faker.Date.Recent(30),
+                        IsVisible = faker.Random.Bool()
+                    };
+
+                    products.Add(product);
+                }
+
                 // Guardar en base de datos
                 context.Roles.AddRange(roleAdmin, roleClient);
                 context.Users.AddRange(users);
+                context.Products.AddRange(products);
                 context.SaveChanges();
             }
         }
