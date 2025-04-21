@@ -40,7 +40,7 @@ try
 
     app.MapControllers();
     app.Run();
-}
+    }
 catch (Exception ex)
 {
     Log.Fatal(ex, "server terminated unexpectedly");
