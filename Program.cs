@@ -1,17 +1,51 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+using TallerIDWM_Backend.Src.Data;
+using TallerIDWM_Backend.Src.Models;
 
-var app = builder.Build();
+Log.Logger = new LoggerConfiguration()
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+    .CreateLogger();
+try
 {
-    app.MapOpenApi();
+    Log.Information("starting server.");
+    var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddControllers();
+    builder.Services.AddDbContext<DataContext>(options => 
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Host.UseSerilog((context, services, configuration) =>
+    {
+        configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext()
+            .Enrich.WithThreadId()
+            .Enrich.WithMachineName();
+
+    });
+
+    var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<DataContext>();
+
+        // Migraciones pendientes
+        await context.Database.MigrateAsync();
+
+        // Poblar la base de datos con el DataSeeder
+        DataSeeder.Initialize(services);
+    }
+
+    app.MapControllers();
+    app.Run();
+    }
+catch (Exception ex)
+{
+    Log.Fatal(ex, "server terminated unexpectedly");
 }
-
-app.UseHttpsRedirection();
-
-app.Run();
+finally
+{
+    Log.CloseAndFlush();
+}
