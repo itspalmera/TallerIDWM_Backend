@@ -13,7 +13,7 @@ namespace TallerIDWM_Backend.Src.Models
          public string Phone { get; set; } = string.Empty;
         public DateOnly BirthDate { get; set; }
         public string Password { get; set; } = string.Empty;
-        public bool Active { get; set; }
+        public bool Active { get; set; } 
 
 
         // Relación uno a uno con Role
