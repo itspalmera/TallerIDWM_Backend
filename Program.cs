@@ -29,6 +29,11 @@ try
 
     });
 
+    // Configurar logging
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.AddDebug();
+    
     var app = builder.Build();
 
     using (var scope = app.Services.CreateScope())

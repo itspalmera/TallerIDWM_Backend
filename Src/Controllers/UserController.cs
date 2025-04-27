@@ -11,10 +11,11 @@ namespace TallerIDWM_Backend.Src.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(UnitOfWork unitOfWork) : ControllerBase()
+    public class UserController(ILogger<UserController> logger, UnitOfWork unitOfWork) : ControllerBase()
     {
+        private readonly ILogger<UserController> _logger = logger;
         private readonly UnitOfWork _context = unitOfWork;
-        
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteUser(int id)
