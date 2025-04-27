@@ -3,7 +3,7 @@ using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Models;
 
-namespace TallerIDWM_Backend.Src.Repositories
+namespace TallerIDWM_Backend.Src.Repository
 {
     public class ProductRepository(DataContext dataContext) : IProductRepository
     {
