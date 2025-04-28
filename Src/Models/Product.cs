@@ -13,16 +13,22 @@ namespace TallerIDWM_Backend.Src.Models
         public required string Description { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "El precio debe ser un valor positivo.")]
-        public decimal Price { get; set; }
+        public int Price { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "El stock debe ser un valor positivo.")]
         public int Stock { get; set; }
-        public required string Category { get; set; }
-        public required string Brand { get; set; }
         public required bool IsNew { get; set; } // true = nuevo, false = usado
-        public string[]? Urls { get; set; }
+        public bool IsVisible { get; set; }        
         public DateTime CreatedAt { get; set; }        
         public DateTime? UpdatedAt { get; set; }
-        public bool IsVisible { get; set; }
+
+        // Relación uno a muchos con ProductImage
+        public List<ProductImage> ProductImages { get; set; } = [];
+
+        // Relación muchos a uno con Category y Brand
+        //public int CategoryId { get; set; }
+        public Category Category { get; set; } = null!;
+        //public int BrandId { get; set; }
+        public Brand Brand { get; set; } = null!;
     }
 }
