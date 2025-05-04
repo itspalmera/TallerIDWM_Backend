@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+
 using Serilog;
 
 using TallerIDWM_Backend.Src.Data;
-using TallerIDWM_Backend.Src.Models;
+using TallerIDWM_Backend.Src.Interfaces;
+using TallerIDWM_Backend.Src.Repository;
 
 Log.Logger = new LoggerConfiguration()
 
@@ -14,6 +16,9 @@ try
     builder.Services.AddControllers();
     builder.Services.AddDbContext<DataContext>(options => 
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Services.AddScoped<IProductRepository, ProductRepository>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<UnitOfWork>();
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         configuration
@@ -24,6 +29,11 @@ try
 
     });
 
+    // Configurar logging
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.AddDebug();
+    
     var app = builder.Build();
 
     using (var scope = app.Services.CreateScope())

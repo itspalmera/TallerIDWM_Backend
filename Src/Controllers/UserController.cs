@@ -5,21 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TallerIDWM_Backend.Src.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using TallerIDWM_Backend.Src.Data;
 
 namespace TallerIDWM_Backend.Src.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController(ILogger<UserController> logger, UnitOfWork unitOfWork) : ControllerBase()
     {
-        private readonly IUserRepository _userRepository;
-
-        public UserController(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
-        
+        private readonly ILogger<UserController> _logger = logger;
+        private readonly UnitOfWork _context = unitOfWork;
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrador")]
@@ -27,7 +22,7 @@ namespace TallerIDWM_Backend.Src.Controller
         {
             try
             {
-                var result = await _userRepository.DeleteUser(id);
+                var result = await _context.UserRepository.DeleteUser(id);
                 if (result)
                 {
                     return Ok("Usuario desactivado con éxito");

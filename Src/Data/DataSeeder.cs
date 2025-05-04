@@ -77,25 +77,50 @@ namespace TallerIDWM_Backend.Src.Data
                     users.Add(user);
                 }
 
-                var products = new List<Product>();
+                // Crear categorías únicas
+                var categories = new List<Category>();
+                for (int i = 0; i < 5; i++) // Generar 5 categorías únicas
+                {
+                    categories.Add(new Category
+                    {
+                        Name = faker.Commerce.Categories(1).First()
+                    });
+                }
 
-                // Crear 10 productos aleatorios
+                // Crear marcas únicas
+                var brands = new List<Brand>();
+                for (int i = 0; i < 5; i++) // Generar 5 marcas únicas
+                {
+                    brands.Add(new Brand
+                    {
+                        Name = faker.Company.CompanyName()
+                    });
+                }
+
+                var products = new List<Product>();
                 for (int i = 0; i < 10; i++)
                 {
+                    // Seleccionar una categoría y una marca aleatoria
+                    var category = categories[faker.Random.Int(0, categories.Count - 1)];
+                    var brand = brands[faker.Random.Int(0, brands.Count - 1)];
+
+                    // Crear imágenes aleatorias para el producto
+                    var productImages = new List<ProductImage>
+                    {
+                        new ProductImage { Url = faker.Image.PicsumUrl() },
+                        new ProductImage { Url = faker.Image.PicsumUrl() }
+                    };
+
                     var product = new Product
                     {
                         Title = faker.Commerce.ProductName(),
                         Description = faker.Commerce.ProductDescription(),
-                        Price = decimal.Parse(faker.Commerce.Price(100, 10000)),
+                        Price = faker.Random.Int(1000, 100000),
                         Stock = faker.Random.Int(0, 100),
-                        Category = faker.Commerce.Categories(1).First(),
-                        Brand = faker.Company.CompanyName(),
+                        Category = category,
+                        Brand = brand,
                         IsNew = faker.Random.Bool(),
-                        Urls =
-                        [
-                            faker.Image.PicsumUrl(),
-                            faker.Image.PicsumUrl()
-                        ],
+                        ProductImages = productImages,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = faker.Date.Recent(30),
                         IsVisible = faker.Random.Bool()
@@ -107,6 +132,8 @@ namespace TallerIDWM_Backend.Src.Data
                 // Guardar en base de datos
                 context.Roles.AddRange(roleAdmin, roleClient);
                 context.Users.AddRange(users);
+                context.Categories.AddRange(categories);
+                context.Brands.AddRange(brands);
                 context.Products.AddRange(products);
                 context.SaveChanges();
             }
