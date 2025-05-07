@@ -20,10 +20,7 @@ namespace TallerIDWM_Backend.Src.Data
 
                 var faker = new Faker("es");
 
-                // Crear roles
-                var roleAdmin = new Role { Name = "Administrador" };
-                var roleClient = new Role { Name = "Cliente" };
-
+                /*
                 // Crear administrador fijo
                 var adminUser = new User
                 {
@@ -43,34 +40,7 @@ namespace TallerIDWM_Backend.Src.Data
                         zipCode = "8320000"
                     }
                 };
-
-                var users = new List<User> { adminUser };
-
-                // Crear 10 usuarios cliente aleatorios
-                for (int i = 0; i < 10; i++)
-                {
-                    var user = new User
-                    {
-                        Name = faker.Name.FullName(),
-                        Email = faker.Internet.Email(),
-                        Phone = faker.Phone.PhoneNumber(),
-                        BirthDate = DateOnly.FromDateTime(faker.Date.Past(30, DateTime.Now.AddYears(-18))),
-                        Password = faker.Internet.Password(),
-                        Active = faker.Random.Bool(),
-                        Role = roleClient,
-                        Direction = new Direction
-                        {
-                            street = faker.Address.StreetName(),
-                            number = faker.Address.BuildingNumber(),
-                            city = faker.Address.City(),
-                            state = faker.Address.State(),
-                            zipCode = faker.Address.ZipCode()
-                        }
-                    };
-
-                    users.Add(user);
-                }
-
+*/
                 var products = new List<Product>();
                 for (int i = 0; i < 10; i++)
                 {
@@ -100,8 +70,6 @@ namespace TallerIDWM_Backend.Src.Data
                 }
 
                 // Guardar en base de datos
-                context.Roles.AddRange(roleAdmin, roleClient);
-                context.Users.AddRange(users);
                 context.Products.AddRange(products);
                 context.SaveChanges();
             }

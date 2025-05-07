@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using TallerIDWM_Backend.Src.Models;
@@ -7,27 +8,26 @@ namespace TallerIDWM_Backend.Src.Data
     public class DataContext(DbContextOptions dbContextOptions) : DbContext(dbContextOptions)
     {
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Role> Roles { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<ProductImage> ProductImages { get; set; } = null!;
         public DbSet<Direction> Directions { get; set; } = null!;
 
-        // Genera problemas al ejecutar el proyecto
-        // protected override void OnModelCreating(ModelBuilder modelBuilder)
-        // {
-        //     base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        //     // Relación uno a uno entre User y Role
-        //     modelBuilder.Entity<User>()
-        //         .HasOne(u => u.Role)
-        //         .WithOne()
-        //         .HasForeignKey<User>(u => u.RoleId);
+            // Configuración de la relación uno a uno entre User y Direction
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Direction)
+                .WithOne(d => d.User)
+                .HasForeignKey<Direction>(d => d.UserId);
 
-        //     // Relación uno a uno entre User y Direction
-        //     modelBuilder.Entity<User>()
-        //         .HasOne(u => u.Direction)
-        //         .WithOne(d => d.User)
-        //         .HasForeignKey<Direction>(d => d.Id);
-        // }
+            List<IdentityRole> roles =
+            [
+                new IdentityRole { Id = "1" ,Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "2" ,Name = "User", NormalizedName = "USER" }
+            ];
+            modelBuilder.Entity<IdentityRole>().HasData(roles);
+        }
     }
 }
