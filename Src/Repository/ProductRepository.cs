@@ -8,29 +8,40 @@ namespace TallerIDWM_Backend.Src.Repository
     public class ProductRepository(DataContext dataContext) : IProductRepository
     {
         private readonly DataContext _dataContext = dataContext;
-        public Task AddProductAsync(Product product)
+        public async Task AddProductAsync(Product product)
         {
-            throw new NotImplementedException();
+            await _dataContext.Products.AddAsync(product);
         }
-
-        public Task DeleteProductAsync(int id)
+        public void DeleteProductAsync(Product product)
         {
-            throw new NotImplementedException();
+            _dataContext.Products.Remove(product);
         }
-
-        public async Task<List<Product>> GetAllProductsAsync()
+        public async Task<List<Product>> GetProductsAsync()
         {
-            return await _dataContext.Products.ToListAsync();
+            return await _dataContext.Products.ToListAsync() ?? throw new Exception("No products found.");
         }
-
-        public Task<Product> GetProductByIdAsync(int id)
+        public async Task<Product> GetProductByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Products.FirstAsync(p => p.Id == id) ?? throw new Exception("Product not found.");
         }
-
-        public Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(Product product)
         {
-            throw new NotImplementedException();
+            var existingProduct = await _dataContext.Products.FindAsync(product.Id) ?? throw new Exception("Product not found.");
+            existingProduct.Title = product.Title;
+            existingProduct.Description = product.Description;
+            existingProduct.Price = product.Price;
+            existingProduct.Stock = product.Stock;
+            existingProduct.Category = product.Category;
+            existingProduct.Brand = product.Brand;
+            existingProduct.IsNew = product.IsNew;
+            existingProduct.IsVisible = product.IsVisible;
+            existingProduct.UpdatedAt = DateTime.UtcNow;
+            existingProduct.ProductImages = product.ProductImages;
+            _dataContext.Products.Update(existingProduct);
+        }
+        public IQueryable<Product> GetQueryableProducts()
+        {
+            return _dataContext.Products.AsQueryable();
         }
     }
 }
