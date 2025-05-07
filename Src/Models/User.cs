@@ -3,22 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Bogus.DataSets;
+using Microsoft.AspNetCore.Identity;
+
 namespace TallerIDWM_Backend.Src.Models
 {
-    public class User
+    public class User: IdentityUser
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
         public DateOnly BirthDate { get; set; }
-        public string Password { get; set; } = string.Empty;
+        public DateOnly LastAccess { get; set; }
+        public DateOnly Created { get; set; }
         public bool Active { get; set; } 
 
-
-        // Relación uno a uno con Role
-        public int RoleId { get; set; }  
-        public Role Role { get; set; } = null!;
+        public string? DeactivationReason { get; set; }
+ 
 
         // Relación uno a uno con Direction
         public Direction Direction { get; set; } = null!;

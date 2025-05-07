@@ -17,6 +17,8 @@ namespace TallerIDWM_Backend.Src.Models
 
         [Range(0, int.MaxValue, ErrorMessage = "El stock debe ser un valor positivo.")]
         public int Stock { get; set; }
+        public required string Category { get; set; } = string.Empty;
+        public required string Brand { get; set; } = string.Empty;
         public required bool IsNew { get; set; } // true = nuevo, false = usado
         public bool IsVisible { get; set; }        
         public DateTime CreatedAt { get; set; }        
@@ -24,11 +26,5 @@ namespace TallerIDWM_Backend.Src.Models
 
         // Relación uno a muchos con ProductImage
         public List<ProductImage> ProductImages { get; set; } = [];
-
-        // Relación muchos a uno con Category y Brand
-        //public int CategoryId { get; set; }
-        public Category Category { get; set; } = null!;
-        //public int BrandId { get; set; }
-        public Brand Brand { get; set; } = null!;
     }
 }
