@@ -92,12 +92,12 @@ namespace TallerIDWM_Backend.Src.Controllers
             }
         }
 
-        [HttpGet("{title}")]
-        public async Task<ActionResult<ApiResponse<Product>>> GetProduct(string title)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse<Product>>> GetProduct(int id)
         {
             try 
             {
-                var product = await _context.ProductRepository.GetProductByTitleAsync(title);
+                var product = await _context.ProductRepository.GetProductByIdAsync(id);
                 var response = new ApiResponse<Product>(
                     true, 
                     "Producto encontrado correctamente.", 
@@ -113,24 +113,24 @@ namespace TallerIDWM_Backend.Src.Controllers
 
         [HttpPost]
         // Authorize(Roles = "Administrador")]
-        public async Task<ActionResult<ApiResponse<Product>>> AddProduct([FromBody] CreateProductDto createProductDto)
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> AddProduct([FromBody] CreateProductDto createProductDto)
         {
             try 
             {
                 if (!ModelState.IsValid) 
                 {
-                    return BadRequest(new ApiResponse<Product>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                    return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
                 }
                 var product = createProductDto.MapToProduct();
 
                 await _context.ProductRepository.AddProductAsync(product);
                 await _context.SaveChangesAsync();
-                var response = new ApiResponse<Product>(
+                var response = new ApiResponse<ProductDtoAdmin>(
                     true, 
                     "Producto agregado correctamente.", 
-                    product);
+                    product.MapToProductDtoAdmin());
 
-                return CreatedAtAction(nameof(GetProduct), new {title = product.Title}, response);
+                return CreatedAtAction(nameof(GetProduct), new {Id = product.Id}, response);
             } 
             catch (Exception ex) 
             {
@@ -139,12 +139,13 @@ namespace TallerIDWM_Backend.Src.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> RemoveProduct(string title)
+        [HttpDelete("{id}")]
+        // [Authorize(Roles = "Administrador")]
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> RemoveProduct(int id)
         {
             try 
             {
-                var product = await _context.ProductRepository.GetProductByTitleAsync(title);
+                var product = await _context.ProductRepository.GetProductByIdAsync(id);
                 if (product == null) 
                 {
                     return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));

@@ -26,9 +26,9 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             return await _dataContext.Products.ToListAsync() ?? throw new Exception("No se encontraron productos.");
         }
-        public async Task<Product> GetProductByTitleAsync(string title)
+        public async Task<Product> GetProductByIdAsync(int id)
         {
-            return await _dataContext.Products.FirstAsync(p => p.Title == title) ?? throw new Exception("El producto no fue encontrado.");
+            return await _dataContext.Products.FirstAsync(p => p.Id == id) ?? throw new Exception("El producto no fue encontrado.");
         }
         public async Task UpdateProductAsync(Product product)
         {
