@@ -138,5 +138,43 @@ namespace TallerIDWM_Backend.Src.Controllers
                 return BadRequest(new ApiResponse<Product>(false, "Error al agregar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             }
         }
+
+        [HttpDelete]
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> RemoveProduct(string title)
+        {
+            try 
+            {
+                var product = await _context.ProductRepository.GetProductByTitleAsync(title);
+                if (product == null) 
+                {
+                    return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));
+                }
+                // Lógica para verificar si el producto tiene órdenes asociadas
+                // if (product.Orders.Count > 0) 
+                // {
+                //     // Cambiar el estado del producto a no visible
+                //     product.IsVisible = false;
+                //     return Ok(new ApiResponse<ProductDtoAdmin>(
+                //         true, 
+                //         "Producto removido correctamente, pero tiene órdenes asociadas. Se ha cambiado su estado a no visible.", 
+                //         product.MapToProductDtoAdmin()));
+                // }
+
+                // Si no tiene órdenes asociadas, eliminar el producto
+                _context.ProductRepository.DeleteProductAsync(product);
+                await _context.SaveChangesAsync();
+                var response = new ApiResponse<Product>(
+                    true, 
+                    "Producto eliminado correctamente.", 
+                    product);
+
+                return Ok(response);
+            } 
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error al eliminar el producto.");
+                return BadRequest(new ApiResponse<Product>(false, "Error al eliminar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+            }
+        }
     }
 }
