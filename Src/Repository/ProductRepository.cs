@@ -36,7 +36,7 @@ namespace TallerIDWM_Backend.Src.Repository
         }
         public IQueryable<Product> GetQueryableProducts()
         {
-            return _dataContext.Products.AsQueryable();
+            return _dataContext.Products.Include(p => p.ProductImages).Where(p => p.IsVisible == true).AsQueryable();
         }
     }
 }

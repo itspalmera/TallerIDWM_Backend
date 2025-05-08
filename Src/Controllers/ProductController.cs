@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.DTOs.Product;
@@ -19,13 +21,12 @@ namespace TallerIDWM_Backend.Src.Controllers
         
         // Obtener todos los productos en vista de cliente 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<Product>>>> GetProducts([FromQuery] ProductParams productParams)
+        public async Task<ActionResult<ApiResponse<IEnumerable<ProductDto>>>> GetProducts([FromQuery] ProductParams productParams)
         {
             try 
             {
                 // Obtener todos los productos visibles
-                var query = _context.ProductRepository.GetQueryableProducts()
-                                                      .Where(p => p.IsVisible == true);
+                var query = _context.ProductRepository.GetQueryableProducts();
 
                 // Se aplican los filtros según los parámetros de consulta
                 query = query.Search(productParams.Search)
@@ -39,17 +40,17 @@ namespace TallerIDWM_Backend.Src.Controllers
                 Response.AddPaginationHeader(pagedList.Metadata);
 
                 // Crear la respuesta
-                var response = new ApiResponse<IEnumerable<Product>>(
+                var response = new ApiResponse<IEnumerable<ProductDto>>(
                     true, 
                     "Productos obtenidos correctamente.", 
-                    pagedList); 
+                    pagedList.Select(p => p.MapToProductDto())); 
 
                 return Ok(response);
             } 
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Error obteniendo los productos.");
-                return StatusCode(500, "Internal server error");
+                _logger.LogError(ex, "Error al obtener los productos.");
+                return NotFound(new ApiResponse<ProductDto>(false, "No se encontraron productos."));
             }
         }
 
@@ -87,27 +88,27 @@ namespace TallerIDWM_Backend.Src.Controllers
             } 
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Error obteniendo los productos.");
-                return StatusCode(500, "Internal server error");
+                _logger.LogError(ex, "Error al obtener los productos.");
+                return NotFound(new ApiResponse<ProductDtoAdmin>(false, "No se encontraron productos."));
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Product>>> GetProduct(int id)
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> GetProduct(int id)
         {
             try 
             {
                 var product = await _context.ProductRepository.GetProductByIdAsync(id);
-                var response = new ApiResponse<Product>(
+                var response = new ApiResponse<ProductDtoAdmin>(
                     true, 
                     "Producto encontrado correctamente.", 
-                    product);
+                    product.MapToProductDtoAdmin());
                 return Ok(response);
             } 
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error al obtener el producto mediante el título de este.");
-                return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));
+                return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
             }
         }
 
@@ -135,7 +136,7 @@ namespace TallerIDWM_Backend.Src.Controllers
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error al agregar el producto.");
-                return BadRequest(new ApiResponse<Product>(false, "Error al agregar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al agregar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             }
         }
 
@@ -148,7 +149,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 var product = await _context.ProductRepository.GetProductByIdAsync(id);
                 if (product == null) 
                 {
-                    return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));
+                    return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
                 }
                 // Lógica para verificar si el producto tiene órdenes asociadas
                 // if (product.Orders.Count > 0) 
@@ -164,17 +165,17 @@ namespace TallerIDWM_Backend.Src.Controllers
                 // Si no tiene órdenes asociadas, eliminar el producto
                 _context.ProductRepository.DeleteProduct(product);
                 await _context.SaveChangesAsync();
-                var response = new ApiResponse<Product>(
+                var response = new ApiResponse<ProductDtoAdmin>(
                     true, 
                     "Producto eliminado correctamente.", 
-                    product);
+                    product.MapToProductDtoAdmin());
 
                 return Ok(response);
             } 
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error al eliminar el producto.");
-                return BadRequest(new ApiResponse<Product>(false, "Error al eliminar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al eliminar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             }
         }
 
@@ -190,7 +191,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 var product = await _context.ProductRepository.GetProductByIdAsync(id);
                 if (product == null) 
                 {
-                    return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));
+                    return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
                 }
                 
                 product.Title = updateProductDto.Title ?? product.Title;
@@ -223,7 +224,7 @@ namespace TallerIDWM_Backend.Src.Controllers
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error al actualizar el producto.");
-                return BadRequest(new ApiResponse<Product>(false, "Error al actualizar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al actualizar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             }
         }
     }

@@ -23,6 +23,16 @@ namespace TallerIDWM_Backend.Src.Mappers
                 IsVisible = true // Valor por defecto al crear un nuevo producto
             };
         }
+        
+        public static ProductDto MapToProductDto(this Product product)
+        {
+            return new ProductDto
+            {
+                Title = product.Title,
+                Price = product.Price,
+                ImageUrl = product.ProductImages.FirstOrDefault()?.Url ?? string.Empty // Asignar la primera imagen o una cadena vacía si no hay imágenes
+            };
+        }
 
         public static ProductDtoAdmin MapToProductDtoAdmin(this Product product)
         {
