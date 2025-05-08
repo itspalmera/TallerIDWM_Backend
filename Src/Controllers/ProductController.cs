@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using TallerIDWM_Backend.Src.Data;
+using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.Extensions;
 using TallerIDWM_Backend.Src.Helpers;
+using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.RequestHelpers;
 
@@ -14,6 +16,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         private readonly ILogger<ProductController> _logger = logger;
         private readonly UnitOfWork _context = unitOfWork;
         
+        // Get all products with pagination and filtering for 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<Product>>>> GetProducts([FromQuery] ProductParams productParams)
         {
@@ -48,43 +51,50 @@ namespace TallerIDWM_Backend.Src.Controllers
             }
         }
         
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Product>>> GetProduct(int id)
+        [HttpGet("{title}")]
+        public async Task<ActionResult<ApiResponse<Product>>> GetProduct(string title)
         {
             try 
             {
-                var product = await _context.ProductRepository.GetProductByIdAsync(id);
+                var product = await _context.ProductRepository.GetProductByTitleAsync(title);
                 var response = new ApiResponse<Product>(
                     true, 
-                    "Product retrieved successfully", 
+                    "Producto encontrado correctamente.", 
                     product);
                 return Ok(response);
             } 
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Error retrieving product with ID {Id}.", id);
-                return NotFound(new ApiResponse<Product>(false, "Product not found."));
+                _logger.LogError(ex, "Error al obtener el producto mediante el título de este.");
+                return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));
             }
         }
 
         [HttpPost]
         // Authorize(Roles = "Administrador")]
-        public async Task<ActionResult<ApiResponse<Product>>> AddProduct(Product product)
+        public async Task<ActionResult<ApiResponse<Product>>> AddProduct([FromBody] CreateProductDto createProductDto)
         {
             try 
             {
+                if (!ModelState.IsValid) 
+                {
+                    return BadRequest(new ApiResponse<Product>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                }
+                var product = createProductDto.MapToProduct();
+
                 await _context.ProductRepository.AddProductAsync(product);
                 await _context.SaveChangesAsync();
                 var response = new ApiResponse<Product>(
                     true, 
-                    "Product added successfully", 
+                    "Producto agregado correctamente.", 
                     product);
-                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
+
+                return CreatedAtAction(nameof(GetProduct), new {title = product.Title}, response);
             } 
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Error adding product.");
-                return BadRequest(new ApiResponse<Product>(false, "Error adding product."));
+                _logger.LogError(ex, "Error al agregar el producto.");
+                return BadRequest(new ApiResponse<Product>(false, "Error al agregar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             }
         }
     }

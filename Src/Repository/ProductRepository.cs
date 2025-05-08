@@ -18,15 +18,15 @@ namespace TallerIDWM_Backend.Src.Repository
         }
         public async Task<List<Product>> GetProductsAsync()
         {
-            return await _dataContext.Products.ToListAsync() ?? throw new Exception("No products found.");
+            return await _dataContext.Products.ToListAsync() ?? throw new Exception("No se encontraron productos.");
         }
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<Product> GetProductByTitleAsync(string title)
         {
-            return await _dataContext.Products.FirstAsync(p => p.Id == id) ?? throw new Exception("Product not found.");
+            return await _dataContext.Products.FirstAsync(p => p.Title == title) ?? throw new Exception("El producto no fue encontrado.");
         }
         public async Task UpdateProductAsync(Product product)
         {
-            var existingProduct = await _dataContext.Products.FindAsync(product.Id) ?? throw new Exception("Product not found.");
+            var existingProduct = await _dataContext.Products.FindAsync(product.Id) ?? throw new Exception("El producto no fue encontrado.");
             existingProduct.Title = product.Title;
             existingProduct.Description = product.Description;
             existingProduct.Price = product.Price;
