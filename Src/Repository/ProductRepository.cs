@@ -12,11 +12,11 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             await _dataContext.Products.AddAsync(product);
         }
-        public void DeleteProductAsync(Product product)
+        public void DeleteProduct(Product product)
         {
             _dataContext.Products.Remove(product);
         }
-        public async Task RemoveProductAsync(Product product)
+        public async Task RemoveProduct(Product product)
         {
             var existingProduct = await _dataContext.Products.FindAsync(product.Id) ?? throw new Exception("El producto no fue encontrado.");
             existingProduct.IsVisible = false;
@@ -30,20 +30,9 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             return await _dataContext.Products.FirstAsync(p => p.Id == id) ?? throw new Exception("El producto no fue encontrado.");
         }
-        public async Task UpdateProductAsync(Product product)
+        public void UpdateProduct(Product product)
         {
-            var existingProduct = await _dataContext.Products.FindAsync(product.Id) ?? throw new Exception("El producto no fue encontrado.");
-            existingProduct.Title = product.Title;
-            existingProduct.Description = product.Description;
-            existingProduct.Price = product.Price;
-            existingProduct.Stock = product.Stock;
-            existingProduct.Category = product.Category;
-            existingProduct.Brand = product.Brand;
-            existingProduct.IsNew = product.IsNew;
-            existingProduct.IsVisible = product.IsVisible;
-            existingProduct.UpdatedAt = DateTime.UtcNow;
-            existingProduct.ProductImages = product.ProductImages;
-            _dataContext.Products.Update(existingProduct);
+            _dataContext.Products.Update(product);
         }
         public IQueryable<Product> GetQueryableProducts()
         {

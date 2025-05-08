@@ -162,7 +162,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 // }
 
                 // Si no tiene órdenes asociadas, eliminar el producto
-                _context.ProductRepository.DeleteProductAsync(product);
+                _context.ProductRepository.DeleteProduct(product);
                 await _context.SaveChangesAsync();
                 var response = new ApiResponse<Product>(
                     true, 
@@ -175,6 +175,55 @@ namespace TallerIDWM_Backend.Src.Controllers
             {
                 _logger.LogError(ex, "Error al eliminar el producto.");
                 return BadRequest(new ApiResponse<Product>(false, "Error al eliminar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> UpdateProduct(int id, [FromBody] UpdateProductDto updateProductDto)
+        {
+            try 
+            {
+                if (!ModelState.IsValid) 
+                {
+                    return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                }
+                var product = await _context.ProductRepository.GetProductByIdAsync(id);
+                if (product == null) 
+                {
+                    return NotFound(new ApiResponse<Product>(false, "El producto no fue encontrado."));
+                }
+                
+                product.Title = updateProductDto.Title ?? product.Title;
+                product.Description = updateProductDto.Description ?? product.Description;
+                product.Price = updateProductDto.Price ?? product.Price;
+                product.Stock = updateProductDto.Stock ?? product.Stock;
+                product.Category = updateProductDto.Category ?? product.Category;
+                product.Brand = updateProductDto.Brand ?? product.Brand;
+                product.IsNew = updateProductDto.IsNew ?? product.IsNew;
+                if (updateProductDto.ImagesToAdd != null && updateProductDto.ImagesToAdd.Length != 0)
+                {
+                    foreach (var imageUrl in updateProductDto.ImagesToAdd)
+                    {
+                        product.ProductImages.Add(new ProductImage { Url = imageUrl });
+                    }
+                }
+                if (updateProductDto.ImagesToDelete != null && updateProductDto.ImagesToDelete.Length != 0)
+                {
+                    product.ProductImages.RemoveAll(pi => updateProductDto.ImagesToDelete.Contains(pi.Url));
+                }
+                _context.ProductRepository.UpdateProduct(product);    
+                await _context.SaveChangesAsync();
+                var response = new ApiResponse<ProductDtoAdmin>(
+                    true, 
+                    "Producto actualizado correctamente.", 
+                    product.MapToProductDtoAdmin());
+
+                return Ok(response);
+            } 
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error al actualizar el producto.");
+                return BadRequest(new ApiResponse<Product>(false, "Error al actualizar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             }
         }
     }
