@@ -1,4 +1,5 @@
 using TallerIDWM_Backend.Src.DTOs;
+using TallerIDWM_Backend.Src.DTOs.Product;
 using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Mappers
@@ -20,6 +21,21 @@ namespace TallerIDWM_Backend.Src.Mappers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = null, // No se actualiza al crear un nuevo producto
                 IsVisible = true // Valor por defecto al crear un nuevo producto
+            };
+        }
+
+        public static ProductDtoAdmin MapToProductDtoAdmin(this Product product)
+        {
+            return new ProductDtoAdmin
+            {
+                Title = product.Title,
+                Price = product.Price,
+                Stock = product.Stock,
+                Category = product.Category,
+                Brand = product.Brand,
+                IsNew = product.IsNew,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt
             };
         }
     }

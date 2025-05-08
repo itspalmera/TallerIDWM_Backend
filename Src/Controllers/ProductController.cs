@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.DTOs;
+using TallerIDWM_Backend.Src.DTOs.Product;
 using TallerIDWM_Backend.Src.Extensions;
 using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Mappers;
@@ -16,41 +17,81 @@ namespace TallerIDWM_Backend.Src.Controllers
         private readonly ILogger<ProductController> _logger = logger;
         private readonly UnitOfWork _context = unitOfWork;
         
-        // Get all products with pagination and filtering for 
+        // Obtener todos los productos en vista de cliente 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<Product>>>> GetProducts([FromQuery] ProductParams productParams)
         {
             try 
             {
+                // Obtener todos los productos visibles
                 var query = _context.ProductRepository.GetQueryableProducts()
                                                       .Where(p => p.IsVisible == true);
 
-                // Apply filtering based on the query parameters
+                // Se aplican los filtros según los parámetros de consulta
                 query = query.Search(productParams.Search)
                              .Filter(productParams.Categories, productParams.Brands)
                              .Sort(productParams.SortBy);
 
-                // Get pagination 
+                // Obtener la paginación
                 var pagedList = await PagedList<Product>.ToPagedList(query, productParams.PageNumber, productParams.PageSize);
                 
-                // Set the pagination headers
+                // Establecer los encabezados de paginación
                 Response.AddPaginationHeader(pagedList.Metadata);
 
-                // 
+                // Crear la respuesta
                 var response = new ApiResponse<IEnumerable<Product>>(
                     true, 
-                    "Products retrieved successfully", 
+                    "Productos obtenidos correctamente.", 
                     pagedList); 
 
                 return Ok(response);
             } 
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Error retrieving products.");
+                _logger.LogError(ex, "Error obteniendo los productos.");
                 return StatusCode(500, "Internal server error");
             }
         }
-        
+
+        // Obtener todos los productos en vista de administrador
+        [HttpGet("admin")]
+        // [Authorize(Roles = "Administrador")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<ProductDtoAdmin>>>> GetAllProducts([FromQuery] ProductParams productParams)
+        {
+            try 
+            {
+                // Obtener todos los productos 
+                var query = _context.ProductRepository.GetQueryableProducts();
+
+                // Se aplican los filtros según los parámetros de consulta
+                query = query.Search(productParams.Search)
+                             .Filter(productParams.Categories, productParams.Brands)
+                             .Sort(productParams.SortBy);
+
+                // Mapear los productos a DTOs
+                var mappedQuery = query.Select(p => p.MapToProductDtoAdmin());
+
+                // Obtener la paginación
+                var pagedList = await PagedList<ProductDtoAdmin>.ToPagedList(mappedQuery, productParams.PageNumber, productParams.PageSize = 20);
+                
+                // Establecer los encabezados de paginación
+                Response.AddPaginationHeader(pagedList.Metadata);
+
+                // Crear la respuesta
+                var response = new ApiResponse<IEnumerable<ProductDtoAdmin>>(
+                    true, 
+                    "Productos obtenidos correctamente.", 
+                    pagedList); 
+
+                return Ok(response);
+            } 
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error obteniendo los productos.");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
         [HttpGet("{title}")]
         public async Task<ActionResult<ApiResponse<Product>>> GetProduct(string title)
         {
