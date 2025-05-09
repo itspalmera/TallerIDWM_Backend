@@ -91,8 +91,8 @@ namespace TallerIDWM_Backend.Src.Data
                         Brand = faker.Company.CompanyName(),
                         IsNew = faker.Random.Bool(),
                         ProductImages = productImages,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = faker.Date.Recent(30),
+                        CreatedAt = faker.Date.Recent(30),
+                        UpdatedAt = DateTime.Now,
                         IsVisible = faker.Random.Bool()
                     };
 
