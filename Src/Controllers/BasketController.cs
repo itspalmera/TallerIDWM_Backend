@@ -17,11 +17,15 @@ namespace TallerIDWM_Backend.Src.Controllers
         private readonly ILogger<BasketController> _logger = logger;
         private readonly UnitOfWork _context = unitOfWork;
 
+        // [HttpGet]
+        // public async Task<ActionResult<BasketDto>> GetBasket()
+        // {
+
+        // }
         // private async Task<Basket?> RetrieveBasket()
         // {
         //     var basketId = Request.Cookies["basketId"];
             
-        // }
-                
+        // }    
     }
 }
