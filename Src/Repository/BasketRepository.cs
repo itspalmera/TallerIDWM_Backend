@@ -6,7 +6,7 @@ using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Repository
 {
-    public class BasketRepository(DataContext dataContext) : IBasketInterface
+    public class BasketRepository(DataContext dataContext) : IBasketRepository
     {
         private readonly DataContext _dataContext = dataContext;
         public async Task<Basket?> GetBasketAsync(string basketId)
