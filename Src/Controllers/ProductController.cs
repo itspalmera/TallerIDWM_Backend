@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.DTOs.Product;
 using TallerIDWM_Backend.Src.Extensions;
 using TallerIDWM_Backend.Src.Helpers;
+using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.RequestHelpers;
@@ -14,10 +14,11 @@ namespace TallerIDWM_Backend.Src.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(ILogger<ProductController> logger, UnitOfWork unitOfWork) : ControllerBase()
+    public class ProductController(ILogger<ProductController> logger, UnitOfWork unitOfWork, IPhotoService photoService) : ControllerBase()
     {
         private readonly ILogger<ProductController> _logger = logger;
         private readonly UnitOfWork _context = unitOfWork;
+        private readonly IPhotoService _photoService = photoService;
         
         // Obtener todos los productos en vista de cliente 
         [HttpGet]
@@ -122,16 +123,33 @@ namespace TallerIDWM_Backend.Src.Controllers
                 {
                     return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
                 }
-                var product = createProductDto.MapToProduct();
+
+                var urls = new List<ProductImage>();
+                string? publicId = null;
+
+                foreach (var image in createProductDto.Images)
+                {
+                    var uploadResult = await _photoService.AddPhotoAsync(image);
+                    if (uploadResult.Error != null)
+                    {
+                        return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al subir la imagen.", null, new List<string> { uploadResult.Error.Message }));
+                    }
+
+                    urls.Add(new ProductImage { Url = uploadResult.SecureUrl.AbsoluteUri, PublicId = uploadResult.PublicId });
+                    publicId ??= uploadResult.PublicId;
+                }
+
+                var product = ProductMapper.MapToProduct(createProductDto, urls, publicId);
 
                 await _context.ProductRepository.AddProductAsync(product);
                 await _context.SaveChangesAsync();
+
                 var response = new ApiResponse<ProductDtoAdmin>(
                     true, 
                     "Producto agregado correctamente.", 
                     product.MapToProductDtoAdmin());
 
-                return CreatedAtAction(nameof(GetProduct), new {Id = product.Id}, response);
+                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
             } 
             catch (Exception ex) 
             {

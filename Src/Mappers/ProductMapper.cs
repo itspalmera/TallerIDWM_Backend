@@ -6,7 +6,7 @@ namespace TallerIDWM_Backend.Src.Mappers
 {
     public static class ProductMapper
     {
-        public static Product MapToProduct(this CreateProductDto createProductDto)
+        public static Product MapToProduct(CreateProductDto createProductDto, List<ProductImage> productImages, string? publicId = null)
         {
             return new Product
             {
@@ -17,9 +17,9 @@ namespace TallerIDWM_Backend.Src.Mappers
                 Category = createProductDto.Category,
                 Brand = createProductDto.Brand,
                 IsNew = createProductDto.IsNew,
-                ProductImages = createProductDto.ImageUrl.Select(url => new ProductImage { Url = url }).ToList(),
+                ProductImages = productImages,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = null, // No se actualiza al crear un nuevo producto
+                // UpdatedAt = null, // No se actualiza al crear un nuevo producto
                 IsVisible = true // Valor por defecto al crear un nuevo producto
             };
         }

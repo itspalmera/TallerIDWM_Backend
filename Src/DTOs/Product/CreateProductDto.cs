@@ -33,6 +33,6 @@ namespace TallerIDWM_Backend.Src.DTOs
 
         [Required]
         [MinLength(1, ErrorMessage = "Se requiere al menos una imagen.")]
-        public required string[] ImageUrl { get; set; }
+        public List<IFormFile> Images { get; set; } = [];
     }
 }

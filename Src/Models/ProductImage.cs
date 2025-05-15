@@ -8,7 +8,7 @@ namespace TallerIDWM_Backend.Src.Models
         [Key]
         public int Id { get; set; }
         public string Url { get; set; } = string.Empty;
-        public int PublicId { get; set; }
+        public string PublicId { get; set; } = string.Empty;
 
         // Relación uno a muchos con Product
         public int ProductId { get; set; }
