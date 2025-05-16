@@ -24,11 +24,11 @@ namespace TallerIDWM_Backend.Src.Repository
         }
         public async Task<List<Product>> GetProductsAsync()
         {
-            return await _dataContext.Products.ToListAsync() ?? throw new Exception("No se encontraron productos.");
+            return await _dataContext.Products.Include(p => p.ProductImages).ToListAsync() ?? throw new Exception("No se encontraron productos.");
         }
         public async Task<Product> GetProductByIdAsync(int id)
         {
-            return await _dataContext.Products.FirstAsync(p => p.Id == id) ?? throw new Exception("El producto no fue encontrado.");
+            return await _dataContext.Products.Include(p => p.ProductImages).FirstAsync(p => p.Id == id) ?? throw new Exception("El producto no fue encontrado.");
         }
         public void UpdateProduct(Product product)
         {

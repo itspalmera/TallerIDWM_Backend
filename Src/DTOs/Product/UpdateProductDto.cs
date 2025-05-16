@@ -26,7 +26,7 @@ namespace TallerIDWM_Backend.Src.DTOs.Product
         [StringLength(50, MinimumLength = 3, ErrorMessage = "La marca debe tener entre 3 y 50 caracteres.")]
         public string? Brand { get; set; }
         public bool? IsNew { get; set; }
-        public string[]? ImagesToAdd { get; set; }
-        public string[]? ImagesToDelete { get; set; }
+        public List<IFormFile>? ImagesToAdd { get; set; }
+        public List<string>? ImagesToDelete { get; set; }
     }
 }
