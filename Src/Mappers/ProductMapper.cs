@@ -6,7 +6,7 @@ namespace TallerIDWM_Backend.Src.Mappers
 {
     public static class ProductMapper
     {
-        public static Product MapToProduct(this CreateProductDto createProductDto)
+        public static Product MapToProduct(CreateProductDto createProductDto, List<ProductImage> productImages)
         {
             return new Product
             {
@@ -16,10 +16,9 @@ namespace TallerIDWM_Backend.Src.Mappers
                 Stock = createProductDto.Stock,
                 Category = createProductDto.Category,
                 Brand = createProductDto.Brand,
-                IsNew = createProductDto.IsNew,
-                ProductImages = createProductDto.ImageUrl.Select(url => new ProductImage { Url = url }).ToList(),
+                ProductCondition = createProductDto.Condition,
+                ProductImages = productImages,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = null, // No se actualiza al crear un nuevo producto
                 IsVisible = true // Valor por defecto al crear un nuevo producto
             };
         }
@@ -43,7 +42,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 Stock = product.Stock,
                 Category = product.Category,
                 Brand = product.Brand,
-                IsNew = product.IsNew,
+                Condition = product.ProductCondition.ToString(),
                 CreatedAt = product.CreatedAt,
                 UpdatedAt = product.UpdatedAt
             };

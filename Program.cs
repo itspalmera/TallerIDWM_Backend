@@ -5,6 +5,7 @@ using Serilog;
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Repository;
+using TallerIDWM_Backend.Src.Services;
 
 Log.Logger = new LoggerConfiguration()
 
@@ -19,6 +20,7 @@ try
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+    builder.Services.AddScoped<IPhotoService, PhotoService>();
     builder.Services.AddScoped<UnitOfWork>();
     builder.Host.UseSerilog((context, services, configuration) =>
     {

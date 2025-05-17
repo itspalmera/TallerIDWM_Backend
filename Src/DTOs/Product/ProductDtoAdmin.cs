@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+using TallerIDWM_Backend.Src.Models;
+
 namespace TallerIDWM_Backend.Src.DTOs.Product
 {
     public class ProductDtoAdmin
@@ -9,7 +11,7 @@ namespace TallerIDWM_Backend.Src.DTOs.Product
         public int Stock { get; set; }
         public string Category { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
-        public bool IsNew { get; set; } // true = nuevo, false = usado       
+        public string Condition { get; set; }  = string.Empty;  
         public DateTime CreatedAt { get; set; }        
         public DateTime? UpdatedAt { get; set; }
     }

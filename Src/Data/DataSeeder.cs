@@ -89,7 +89,7 @@ namespace TallerIDWM_Backend.Src.Data
                         Stock = faker.Random.Int(0, 100),
                         Category = faker.Commerce.Categories(1).First(),
                         Brand = faker.Company.CompanyName(),
-                        IsNew = faker.Random.Bool(),
+                        ProductCondition = faker.Random.Enum<ProductCondition>(),
                         ProductImages = productImages,
                         CreatedAt = faker.Date.Recent(30),
                         UpdatedAt = DateTime.Now,
