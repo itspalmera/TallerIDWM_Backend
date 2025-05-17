@@ -35,55 +35,85 @@ namespace TallerIDWM_Backend.Src.Controllers
         [HttpPost]
         public async Task<ActionResult<BasketDto>> AddItemToBasket(int productId, int quantity)
         {
-            _logger.LogWarning("Entrando a AddItemToBasket con productId: {ProductId}, quantity: {Quantity}", productId, quantity);
-            var basket = await RetrieveBasket();
-
-            if (basket == null)
+            try 
             {
-                basket = CreateBasket();
-                await _context.SaveChangesAsync(); 
+                _logger.LogWarning("Entrando a AddItemToBasket con productId: {ProductId}, quantity: {Quantity}", productId, quantity);
+                var basket = await RetrieveBasket();
+
+                if (basket == null)
+                {
+                    basket = CreateBasket();
+                    await _context.SaveChangesAsync(); 
+                }
+
+                var product = await _context.ProductRepository.GetProductByIdAsync(productId);
+                if (product == null)
+                    return BadRequest(new ApiResponse<string>(false, "Producto no encontrado"));
+
+                if (product.Stock == 0)
+                    return BadRequest(new ApiResponse<string>(false, $"El producto '{product.Title}' no tiene stock disponible."));
+
+                var productInBasket = basket.Items.FirstOrDefault(i => i.ProductId == productId);
+                if (productInBasket != null)
+                {
+                    _logger.LogWarning("Producto ya existe en el carrito. ID: {ProductId}", productId);
+                    _logger.LogWarning("Stock Producto: {Product}", product.Stock);
+                    _logger.LogWarning("Cantidad a agregar: {Quantity}", quantity);
+                    _logger.LogWarning("Cantidad en carrito: {QuantityInBasket}",  productInBasket.Quantity);
+                    _logger.LogWarning("Cantidad total: {TotalQuantity}", productInBasket.Quantity + quantity);
+                    if (productInBasket != null && (product.Stock < productInBasket.Quantity + quantity || product.Stock < quantity))
+                    return BadRequest(new ApiResponse<string>(false, $"Solo hay {product.Stock} unidades disponibles de '{product.Title}'"));
+                }
+                else
+                {
+                    _logger.LogWarning("Producto no existe en el carrito. ID: {ProductId}", productId);
+                    _logger.LogWarning("Stock Producto: {Product}", product.Stock);
+                    _logger.LogWarning("Cantidad a agregar: {Quantity}", quantity);
+                }
+
+                basket.AddItem(product, quantity);
+
+                var changes = await _context.SaveChangesAsync();
+                var success = changes > 0;
+
+                return success
+                    ? CreatedAtAction(nameof(GetBasket), new ApiResponse<BasketDto>(true, "Producto añadido al carrito", basket.MapToDto()))
+                    : BadRequest(new ApiResponse<string>(false, "Ocurrió un problema al actualizar el carrito"));
             }
-
-            var product = await _context.ProductRepository.GetProductByIdAsync(productId);
-            if (product == null)
-                return BadRequest(new ApiResponse<string>(false, "Producto no encontrado"));
-
-            if (product.Stock == 0)
-                return BadRequest(new ApiResponse<string>(false, $"El producto '{product.Title}' no tiene stock disponible."));
-
-            _logger.LogWarning("Stock Producto: {Product}", product.Stock);
-            _logger.LogWarning("Cantidad a agregar: {Quantity}", quantity);
-            _logger.LogWarning("Cantidad en carrito: {QuantityInBasket}", basket.Items.Select(i => i.Quantity).Sum());
-            if (product.Stock < basket.Items.Select(i => i.Quantity).Sum() + quantity || product.Stock < quantity)
-                return BadRequest(new ApiResponse<string>(false, $"Solo hay {product.Stock} unidades disponibles de '{product.Title}'"));
-
-            basket.AddItem(product, quantity);
-
-            var changes = await _context.SaveChangesAsync();
-            var success = changes > 0;
-
-            return success
-                ? CreatedAtAction(nameof(GetBasket), new ApiResponse<BasketDto>(true, "Producto añadido al carrito", basket.MapToDto()))
-                : BadRequest(new ApiResponse<string>(false, "Ocurrió un problema al actualizar el carrito"));
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al agregar producto al carrito");
+                return BadRequest(new ApiResponse<string>(false, "Ocurrió un error inesperado"));
+            }
+            
         }
 
         [HttpDelete]
         public async Task<ActionResult<BasketDto>> RemoveItemFromBasket(int productId, int quantity)
         {
-            var basket = await RetrieveBasket();
-            if (basket == null) return NotFound("No se encontró el carrito.");
+            try
+            {
+                var basket = await RetrieveBasket();
+                if (basket == null) return NotFound("No se encontró el carrito.");
 
-            basket.RemoveItem(productId, quantity);
+                basket.RemoveItem(productId, quantity);
 
-            var changes = await _context.SaveChangesAsync();
-            var success = changes > 0;
-            return success
-                ? Ok(new ApiResponse<BasketDto>(
-                    true,
-                    "Producto eliminado del carrito",
-                    basket.MapToDto()
-                ))
-                : BadRequest(new ApiResponse<string>(false, "Error al actualizar el carrito"));
+                var changes = await _context.SaveChangesAsync();
+                var success = changes > 0;
+                return success
+                    ? Ok(new ApiResponse<BasketDto>(
+                        true,
+                        "Producto eliminado del carrito",
+                        basket.MapToDto()
+                    ))
+                    : BadRequest(new ApiResponse<string>(false, "Error al actualizar el carrito"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar producto del carrito");
+                return BadRequest(new ApiResponse<string>(false, "Ocurrió un error inesperado"));
+            }
+            
         }
 
         private async Task<Basket?> RetrieveBasket()
