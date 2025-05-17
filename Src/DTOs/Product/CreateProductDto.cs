@@ -31,7 +31,7 @@ namespace TallerIDWM_Backend.Src.DTOs
         public required string Brand { get; set; }
 
         [Required(ErrorMessage = "El estado del producto es requerido.")]
-        public required ProductCondition Condition { get; set; } = ProductCondition.Nuevo;
+        public required ProductCondition Condition { get; set; }
 
         [Required]
         [MinLength(1, ErrorMessage = "Se requiere al menos una imagen.")]

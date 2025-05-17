@@ -19,7 +19,6 @@ namespace TallerIDWM_Backend.Src.Mappers
                 ProductCondition = createProductDto.Condition,
                 ProductImages = productImages,
                 CreatedAt = DateTime.UtcNow,
-                // UpdatedAt = null, // No se actualiza al crear un nuevo producto
                 IsVisible = true // Valor por defecto al crear un nuevo producto
             };
         }
@@ -43,7 +42,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 Stock = product.Stock,
                 Category = product.Category,
                 Brand = product.Brand,
-                ProductCondition = product.ProductCondition,
+                Condition = product.ProductCondition.ToString(),
                 CreatedAt = product.CreatedAt,
                 UpdatedAt = product.UpdatedAt
             };

@@ -73,11 +73,8 @@ namespace TallerIDWM_Backend.Src.Controllers
                              .Filter(productParams.Brands, productParams.Categories)
                              .Sort(productParams.SortBy);
 
-                // Mapear los productos a DTOs
-                var mappedQuery = query.Select(p => p.MapToProductDtoAdmin());
-
                 // Obtener la paginación
-                var pagedList = await PagedList<ProductDtoAdmin>.ToPagedList(mappedQuery, productParams.PageNumber, productParams.PageSize = 20);
+                var pagedList = await PagedList<Product>.ToPagedList(query, productParams.PageNumber, productParams.PageSize = 20);
 
                 // Establecer los encabezados de paginación
                 Response.AddPaginationHeader(pagedList.Metadata);
@@ -86,7 +83,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 var response = new ApiResponse<IEnumerable<ProductDtoAdmin>>(
                     true,
                     "Productos obtenidos correctamente.",
-                    pagedList);
+                    pagedList.Select(p => p.MapToProductDtoAdmin()));
 
                 return Ok(response);
             }
@@ -118,7 +115,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
         [HttpPost]
         // Authorize(Roles = "Administrador")]
-        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> AddProduct([FromBody] CreateProductDto createProductDto)
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> AddProduct([FromForm] CreateProductDto createProductDto)
         {
             try
             {
@@ -128,7 +125,6 @@ namespace TallerIDWM_Backend.Src.Controllers
                 }
 
                 var urls = new List<ProductImage>();
-                string? publicId = null;
 
                 foreach (var image in createProductDto.Images)
                 {
@@ -139,10 +135,9 @@ namespace TallerIDWM_Backend.Src.Controllers
                     }
 
                     urls.Add(new ProductImage { Url = uploadResult.SecureUrl.AbsoluteUri, PublicId = uploadResult.PublicId });
-                    publicId ??= uploadResult.PublicId;
                 }
 
-                var product = ProductMapper.MapToProduct(createProductDto, urls, publicId);
+                var product = ProductMapper.MapToProduct(createProductDto, urls);
 
                 await _context.ProductRepository.AddProductAsync(product);
                 await _context.SaveChangesAsync();
@@ -196,12 +191,12 @@ namespace TallerIDWM_Backend.Src.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al eliminar el producto.");
-                return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al eliminar el producto.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al eliminar el producto.", null, [ex.Message]));
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> UpdateProduct(int id, [FromBody] UpdateProductDto updateProductDto)
+        public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> UpdateProduct(int id, [FromForm] UpdateProductDto updateProductDto)
         {
             try
             {
@@ -222,7 +217,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
                 if (updateProductDto.ImagesToDelete != null && updateProductDto.ImagesToDelete.Any())
                 {
-                    foreach (var url in product.ProductImages.Select(i => i.Url).ToList())
+                    foreach (var url in product.ProductImages.Select(i => i.Url))
                     {
                         if (updateProductDto.ImagesToDelete.Contains(url))
                         {
@@ -242,7 +237,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                         var uploadResult = await _photoService.AddPhotoAsync(image);
                         if (uploadResult.Error != null)
                         {
-                            return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al subir la imagen.", null, new List<string> { uploadResult.Error.Message }));
+                            return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al subir la imagen.", null, [uploadResult.Error.Message]));
                         }
 
                         product.ProductImages.Add(new ProductImage { Url = uploadResult.SecureUrl.AbsoluteUri, PublicId = uploadResult.PublicId });
@@ -255,7 +250,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 product.Stock = updateProductDto.Stock ?? product.Stock;
                 product.Category = updateProductDto.Category ?? product.Category;
                 product.Brand = updateProductDto.Brand ?? product.Brand;
-                product.IsNew = updateProductDto.IsNew ?? product.IsNew;
+                product.ProductCondition = updateProductDto.Condition ?? product.ProductCondition;
 
                 _context.ProductRepository.UpdateProduct(product);
                 await _context.SaveChangesAsync();
