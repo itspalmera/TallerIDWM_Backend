@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+using TallerIDWM_Backend.Src.Models;
+
 namespace TallerIDWM_Backend.Src.DTOs
 {
     public class CreateProductDto
@@ -29,7 +31,7 @@ namespace TallerIDWM_Backend.Src.DTOs
         public required string Brand { get; set; }
 
         [Required(ErrorMessage = "El estado del producto es requerido.")]
-        public required bool IsNew { get; set; }
+        public required ProductCondition Condition { get; set; } = ProductCondition.Nuevo;
 
         [Required]
         [MinLength(1, ErrorMessage = "Se requiere al menos una imagen.")]

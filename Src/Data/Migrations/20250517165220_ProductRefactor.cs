@@ -5,7 +5,7 @@
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class RefactorProduct : Migration
+    public partial class ProductRefactor : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,11 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
             migrationBuilder.RenameTable(
                 name: "Direction",
                 newName: "Directions");
+
+            migrationBuilder.RenameColumn(
+                name: "IsNew",
+                table: "Products",
+                newName: "ProductCondition");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Direction_UserId",
@@ -51,7 +56,7 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Url = table.Column<string>(type: "TEXT", nullable: false),
-                    PublicId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PublicId = table.Column<string>(type: "TEXT", nullable: false),
                     ProductId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -96,6 +101,11 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
             migrationBuilder.RenameTable(
                 name: "Directions",
                 newName: "Direction");
+
+            migrationBuilder.RenameColumn(
+                name: "ProductCondition",
+                table: "Products",
+                newName: "IsNew");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Directions_UserId",

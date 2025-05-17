@@ -11,8 +11,8 @@ using TallerIDWM_Backend.Src.Data;
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250505022749_RefactorProduct")]
-    partial class RefactorProduct
+    [Migration("20250517165220_ProductRefactor")]
+    partial class ProductRefactor
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,13 +78,13 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsNew")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsVisible")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Price")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductCondition")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Stock")
@@ -111,8 +111,9 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PublicId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
                         .IsRequired()
