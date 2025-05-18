@@ -12,6 +12,7 @@ namespace TallerIDWM_Backend.Src.Data
         public DbSet<ProductImage> ProductImages { get; set; } = null!;
         public DbSet<Direction> Directions { get; set; } = null!;
         public DbSet<Basket> Baskets { get; set; } = null!;
+        public DbSet<Order> Orders { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
