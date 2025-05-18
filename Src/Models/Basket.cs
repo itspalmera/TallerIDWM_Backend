@@ -20,7 +20,7 @@ namespace TallerIDWM_Backend.Src.Models
                 Items.Add(new BasketItem
                 {
                     Quantity = quantity,
-                    Product = product
+                    Product = product,
                 });
             }
             else

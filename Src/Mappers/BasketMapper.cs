@@ -24,7 +24,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                     Price = item.Product.Price,
                     Quantity = item.Quantity,
                     TotalPrice = item.Quantity * item.Product.Price
-                })]
+                })]   
             };
         }
     }

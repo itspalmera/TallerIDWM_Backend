@@ -23,13 +23,19 @@ namespace TallerIDWM_Backend.Src.Controllers
         [HttpGet]
         public async Task<ActionResult<BasketDto>> GetBasket()
         {
+            _logger.LogInformation("Solicitud para obtener el carrito recibida.");
             var basket = await RetrieveBasket();
-            if (basket == null) { return NoContent(); }
+            if (basket == null)
+            {
+                _logger.LogWarning("No se encontró ningún carrito para el usuario.");
+                return NoContent();
+            }
+            _logger.LogInformation("Carrito obtenido correctamente.");
             return Ok(new ApiResponse<BasketDto>(
                 true,
                 "Carrito obtenido correctamente",
                 basket.MapToDto()
-            ));
+            )); 
         }
 
         [HttpPost]
@@ -37,21 +43,28 @@ namespace TallerIDWM_Backend.Src.Controllers
         {
             try 
             {
-                _logger.LogWarning("Entrando a AddItemToBasket con productId: {ProductId}, quantity: {Quantity}", productId, quantity);
+                _logger.LogInformation("Intentando agregar producto al carrito. ProductId: {ProductId}, Quantity: {Quantity}", productId, quantity);
                 var basket = await RetrieveBasket();
 
                 if (basket == null)
                 {
+                    _logger.LogInformation("No se encontró carrito, creando uno nuevo.");
                     basket = CreateBasket();
                     await _context.SaveChangesAsync(); 
                 }
 
                 var product = await _context.ProductRepository.GetProductByIdAsync(productId);
                 if (product == null)
-                    return BadRequest(new ApiResponse<string>(false, "Producto no encontrado"));
+                {
+                    _logger.LogWarning("Producto no encontrado. ProductId: {ProductId}", productId);
+                    return BadRequest(new ApiResponse<BasketDto>(false, "Producto no encontrado"));
+                }
 
                 if (product.Stock == 0)
-                    return BadRequest(new ApiResponse<string>(false, $"El producto '{product.Title}' no tiene stock disponible."));
+                {
+                    _logger.LogWarning("Producto sin stock. ProductId: {ProductId}", productId);
+                    return BadRequest(new ApiResponse<BasketDto>(false, $"El producto '{product.Title}' no tiene stock disponible."));
+                }
 
                 var productInBasket = basket.Items.FirstOrDefault(i => i.ProductId == productId);
                 if (productInBasket != null)
@@ -59,31 +72,40 @@ namespace TallerIDWM_Backend.Src.Controllers
                     _logger.LogWarning("Producto ya existe en el carrito. ID: {ProductId}", productId);
                     _logger.LogWarning("Stock Producto: {Product}", product.Stock);
                     _logger.LogWarning("Cantidad a agregar: {Quantity}", quantity);
-                    _logger.LogWarning("Cantidad en carrito: {QuantityInBasket}",  productInBasket.Quantity);
+                    _logger.LogWarning("Cantidad en carrito: {QuantityInBasket}", productInBasket.Quantity);
                     _logger.LogWarning("Cantidad total: {TotalQuantity}", productInBasket.Quantity + quantity);
                     if (productInBasket != null && (product.Stock < productInBasket.Quantity + quantity || product.Stock < quantity))
-                    return BadRequest(new ApiResponse<string>(false, $"Solo hay {product.Stock} unidades disponibles de '{product.Title}'"));
-                }
-                else
-                {
-                    _logger.LogWarning("Producto no existe en el carrito. ID: {ProductId}", productId);
-                    _logger.LogWarning("Stock Producto: {Product}", product.Stock);
-                    _logger.LogWarning("Cantidad a agregar: {Quantity}", quantity);
+                    {
+                        _logger.LogWarning("No hay suficiente stock para agregar la cantidad solicitada.");
+                        return BadRequest(new ApiResponse<BasketDto>(false, $"Solo hay {product.Stock} unidades disponibles de '{product.Title}'"));
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Producto no existe en el carrito. Se agregará. ProductId: {ProductId}", productId);
+                    }
                 }
 
+                _logger.LogInformation("Agregando producto al carrito. ProductId: {ProductId}, Quantity: {Quantity}", productId, quantity);
                 basket.AddItem(product, quantity);
 
                 var changes = await _context.SaveChangesAsync();
                 var success = changes > 0;
 
-                return success
-                    ? CreatedAtAction(nameof(GetBasket), new ApiResponse<BasketDto>(true, "Producto añadido al carrito", basket.MapToDto()))
-                    : BadRequest(new ApiResponse<string>(false, "Ocurrió un problema al actualizar el carrito"));
+                if (success)
+                {
+                    _logger.LogInformation("Producto añadido al carrito correctamente. ProductId: {ProductId}, BasketId: {BasketId}", productId, basket.BasketId);
+                    return CreatedAtAction(nameof(GetBasket), new ApiResponse<BasketDto>(true, "Producto añadido al carrito", basket.MapToDto()));
+                }
+                else
+                {
+                    _logger.LogWarning("No se pudo actualizar el carrito tras intentar añadir el producto.");
+                    return BadRequest(new ApiResponse<BasketDto>(false, "Ocurrió un problema al actualizar el carrito"));
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al agregar producto al carrito");
-                return BadRequest(new ApiResponse<string>(false, "Ocurrió un error inesperado"));
+                return BadRequest(new ApiResponse<BasketDto>(false, "Ocurrió un error inesperado"));
             }
             
         }
@@ -93,27 +115,39 @@ namespace TallerIDWM_Backend.Src.Controllers
         {
             try
             {
+                _logger.LogInformation("Intentando eliminar producto del carrito. ProductId: {ProductId}, Quantity: {Quantity}", productId, quantity);
                 var basket = await RetrieveBasket();
-                if (basket == null) return NotFound("No se encontró el carrito.");
+                if (basket == null)
+                {
+                    _logger.LogWarning("No se encontró el carrito al intentar eliminar producto.");
+                    return NotFound("No se encontró el carrito.");
+                }
 
+                _logger.LogInformation("Carrito encontrado. BasketId: {BasketId}", basket.BasketId);
                 basket.RemoveItem(productId, quantity);
 
                 var changes = await _context.SaveChangesAsync();
                 var success = changes > 0;
-                return success
-                    ? Ok(new ApiResponse<BasketDto>(
+                if (success)
+                {
+                    _logger.LogInformation("Producto eliminado del carrito correctamente. ProductId: {ProductId}, BasketId: {BasketId}", productId, basket.BasketId);
+                    return Ok(new ApiResponse<BasketDto>(
                         true,
                         "Producto eliminado del carrito",
                         basket.MapToDto()
-                    ))
-                    : BadRequest(new ApiResponse<string>(false, "Error al actualizar el carrito"));
+                    ));
+                }
+                else
+                {
+                    _logger.LogWarning("No se pudo actualizar el carrito tras intentar eliminar el producto.");
+                    return BadRequest(new ApiResponse<BasketDto>(false, "Error al actualizar el carrito"));
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al eliminar producto del carrito");
-                return BadRequest(new ApiResponse<string>(false, "Ocurrió un error inesperado"));
+                return BadRequest(new ApiResponse<BasketDto>(false, "Ocurrió un error inesperado"));
             }
-            
         }
 
         private async Task<Basket?> RetrieveBasket()

@@ -14,8 +14,11 @@ namespace TallerIDWM_Backend.Src.Repository
             return await _dataContext.Baskets
                 .Include(b => b.Items)
                 .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(b => b.BasketId == basketId);
+                .ThenInclude(p => p.ProductImages)
+                .AsSplitQuery()
+                .FirstAsync(b => b.BasketId == basketId);
         }
+        
         public Basket CreateBasket(string basketId)
         {
             var basket = new Basket
