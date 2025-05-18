@@ -11,7 +11,7 @@ namespace TallerIDWM_Backend.Src.DTOs.Product
         public int Stock { get; set; }
         public string Category { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
-        public string Condition { get; set; }  = string.Empty;  
-        public DateTime LastModification { get; set; }        
+        public string Condition { get; set; } = string.Empty;
+        public DateTime LastModification { get; set; }
     }
 }

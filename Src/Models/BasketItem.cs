@@ -9,9 +9,9 @@ namespace TallerIDWM_Backend.Src.Models
         public int Quantity { get; set; }
         // Relación con Product
         public int ProductId { get; set; }
-        public required Product Product { get; set; } 
+        public required Product Product { get; set; }
         // Relación con Basket
-        public int BasketId { get; set; } 
+        public int BasketId { get; set; }
         public Basket Basket { get; set; } = null!;
     }
 }

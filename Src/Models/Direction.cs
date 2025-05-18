@@ -8,14 +8,14 @@ namespace TallerIDWM_Backend.Src.Models
     public class Direction
     {
         public int Id { get; set; }
-        public string street { get; set; } = string.Empty;
-        public string number { get; set; } = string.Empty;
-        public string city { get; set; } = string.Empty;
-        public string state { get; set; } = string.Empty;
-        public string zipCode { get; set; } = string.Empty;
+        public string Street { get; set; } = string.Empty;
+        public string Number { get; set; } = string.Empty;
+        public string Region { get; set; } = string.Empty;
+        public string Commune { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = string.Empty;
 
         // Relación uno a uno con User
-        public int UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public User User { get; set; } = null!;
     }
 }

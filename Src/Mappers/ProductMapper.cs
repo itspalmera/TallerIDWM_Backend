@@ -22,7 +22,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 IsVisible = true // Valor por defecto al crear un nuevo producto
             };
         }
-        
+
         public static ProductDto MapToProductDto(this Product product)
         {
             return new ProductDto

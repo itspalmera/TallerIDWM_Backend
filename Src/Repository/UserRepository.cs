@@ -2,34 +2,83 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Interfaces;
+using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(UserManager<User> userManager) : IUserRepository
     {
-        private readonly DataContext _context;
+        private readonly UserManager<User> _userManager = userManager;
 
-        public UserRepository(DataContext context)
+
+        public IQueryable<User> GetUsersQueryable()
         {
-            _context = context;
+            return _userManager.Users.Include(u => u.Direction).AsQueryable();
         }
-        
 
-        public async Task<bool> DeleteUser(int id)
+
+
+        public async Task<User?> GetUserByIdAsync(string id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null || user.Active == false)
-            {
-                return false;
-            }
-
-            user.Active = false;
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-            return true;
+            return await _userManager.Users
+                .Include(u => u.Direction)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
+
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userManager.Users
+                .Include(u => u.Direction)
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+
+        public async Task<User?> GetUserByNameAsync(string username)
+        {
+            return await _userManager.Users
+                .Include(u => u.Direction)
+                .FirstOrDefaultAsync(u => u.FirstName == username);
+        }
+
+
+        public async Task<bool> CheckPasswordAsync(User user, string password)
+        {
+            return await Task.Run(() =>
+           {
+               var hasher = new PasswordHasher<User>();
+               var result = hasher.VerifyHashedPassword(user, user.PasswordHash!, password);
+               return result == PasswordVerificationResult.Success;
+           });
+        }
+
+
+        public async Task UpdateUserAsync(User user)
+        {
+            await _userManager.UpdateAsync(user);
+        }
+
+
+        public async Task<IdentityResult> UpdatePasswordAsync(User user, string currentPassword, string newPassword)
+        => await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+        public Task<User?> GetUserWithAddressByIdAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public async Task<IList<string>> GetUserRolesAsync(User user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
+
     }
 
 }
