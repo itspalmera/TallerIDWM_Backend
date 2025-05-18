@@ -93,7 +93,7 @@ namespace TallerIDWM_Backend.Src.Data
                         ProductImages = productImages,
                         CreatedAt = faker.Date.Recent(30),
                         UpdatedAt = DateTime.Now,
-                        IsVisible = faker.Random.Bool()
+                        IsVisible = true
                     };
 
                     products.Add(product);

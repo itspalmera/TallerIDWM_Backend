@@ -20,7 +20,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 try
 {
-    Log.Information("starting server.");
+    Log.Information("Inicializando la aplicación...");
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
     
@@ -73,10 +73,27 @@ try
 
     });
 
+    var corsSettings = builder.Configuration.GetSection("CorsSettings");
+    var allowedOrigins = corsSettings.GetSection("AllowedOrigins").Get<string[]>();
+    var allowedMethods = corsSettings.GetSection("AllowedMethods").Get<string[]>();
+    var allowedHeaders = corsSettings.GetSection("AllowedHeaders").Get<string[]>();
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DefaultCorsPolicy", policy =>
+        {
+            policy.WithOrigins(allowedOrigins!)
+                  .WithHeaders(allowedHeaders!)
+                  .WithMethods(allowedMethods!)
+                  .AllowCredentials();
+        });
+    });
+
     // Configurar logging
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.AddDebug();
+
 
     var app = builder.Build();
 
@@ -93,6 +110,7 @@ try
         await DataSeeder.InitDb(app);
     }
 
+    app.UseCors("DefaultCorsPolicy");
     app.MapControllers();
     app.UseAuthentication();
     app.UseAuthorization();
@@ -100,9 +118,10 @@ try
 
     app.Run();
 }
+}
 catch (Exception ex)
 {
-    Log.Fatal(ex, "server terminated unexpectedly");
+    Log.Fatal(ex, "La aplicación falló al iniciar");
 }
 finally
 {

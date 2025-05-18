@@ -12,7 +12,6 @@ namespace TallerIDWM_Backend.Src.DTOs.Product
         public string Category { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
         public string Condition { get; set; }  = string.Empty;  
-        public DateTime CreatedAt { get; set; }        
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime LastModification { get; set; }        
     }
 }
