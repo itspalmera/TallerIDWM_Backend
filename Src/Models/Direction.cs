@@ -10,12 +10,12 @@ namespace TallerIDWM_Backend.Src.Models
         public int Id { get; set; }
         public string Street { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
-        public string State { get; set; } = string.Empty;
-        public string ZipCode { get; set; } = string.Empty;
+        public string Region { get; set; } = string.Empty;
+        public string Commune { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = string.Empty;
 
         // Relación uno a uno con User
-        public int UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public User User { get; set; } = null!;
     }
 }

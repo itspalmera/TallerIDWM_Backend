@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+
 using TallerIDWM_Backend.Src.Data;
 
 namespace TallerIDWM_Backend.Src.Controllers
@@ -9,7 +10,7 @@ namespace TallerIDWM_Backend.Src.Controllers
     {
         private readonly ILogger<ProductController> _logger = logger;
         private readonly UnitOfWork _context = unitOfWork;
-        
+
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {

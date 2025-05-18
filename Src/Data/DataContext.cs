@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Data
 {
-    public class DataContext(DbContextOptions dbContextOptions) : DbContext(dbContextOptions)
+    public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<User>(options)
     {
-        public DbSet<User> Users { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<ProductImage> ProductImages { get; set; } = null!;
         public DbSet<Direction> Directions { get; set; } = null!;

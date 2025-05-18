@@ -1,6 +1,11 @@
 using Bogus;
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 using TallerIDWM_Backend.Src.Models;
+using TallerIDWM_Backend.Src.Data.Seeders;
+using TallerIDWM_Backend.Src.Data;
 
 namespace TallerIDWM_Backend.Src.Data
 {
@@ -20,27 +25,6 @@ namespace TallerIDWM_Backend.Src.Data
 
                 var faker = new Faker("es");
 
-                /*
-                // Crear administrador fijo
-                var adminUser = new User
-                {
-                    Name = "Ignacio Mancilla",
-                    Email = "ignacio.mancilla@gmail.com",
-                    Phone = "+56 9 1234 5678",
-                    BirthDate = new DateOnly(1990, 1, 1),
-                    Password = "Pa$$word2025", // ¡No olvides hashear esto en producción!
-                    Active = true,
-                    Role = roleAdmin,
-                    Direction = new Direction
-                    {
-                        street = "Av. Principal",
-                        number = "100",
-                        city = "Santiago",
-                        state = "RM",
-                        zipCode = "8320000"
-                    }
-                };
-*/
                 var products = new List<Product>();
                 for (int i = 0; i < 10; i++)
                 {
@@ -73,6 +57,35 @@ namespace TallerIDWM_Backend.Src.Data
                 context.Products.AddRange(products);
                 context.SaveChanges();
             }
+
+        }
+
+
+
+        public static async Task InitDb(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
+                ?? throw new InvalidOperationException("Could not get UserManager");
+
+            var context = scope.ServiceProvider.GetRequiredService<DataContext>()
+                ?? throw new InvalidOperationException("Could not get StoreContext");
+
+            await SeedData(context, userManager);
+        }
+
+        private static async Task SeedData(DataContext context, UserManager<User> userManager)
+        {
+            await context.Database.MigrateAsync();
+
+            if (!context.Users.Any())
+            {
+                var userDtos = UserSeeder.GenerateUserDtos(10);
+                await UserSeeder.CreateUsers(userManager, userDtos);
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }

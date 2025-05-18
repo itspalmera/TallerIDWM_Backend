@@ -20,8 +20,8 @@ namespace TallerIDWM_Backend.Src.Models
         public required string Category { get; set; } = string.Empty;
         public required string Brand { get; set; } = string.Empty;
         public required bool IsNew { get; set; } // true = nuevo, false = usado
-        public bool IsVisible { get; set; }        
-        public DateTime CreatedAt { get; set; }        
+        public bool IsVisible { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
         // Relación uno a muchos con ProductImage
