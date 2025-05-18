@@ -35,7 +35,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         [HttpPost]
         public async Task<ActionResult<BasketDto>> AddItemToBasket(int productId, int quantity)
         {
-            try 
+            try
             {
                 _logger.LogWarning("Entrando a AddItemToBasket con productId: {ProductId}, quantity: {Quantity}", productId, quantity);
                 var basket = await RetrieveBasket();
@@ -43,7 +43,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 if (basket == null)
                 {
                     basket = CreateBasket();
-                    await _context.SaveChangesAsync(); 
+                    await _context.SaveChangesAsync();
                 }
 
                 var product = await _context.ProductRepository.GetProductByIdAsync(productId);
@@ -59,10 +59,10 @@ namespace TallerIDWM_Backend.Src.Controllers
                     _logger.LogWarning("Producto ya existe en el carrito. ID: {ProductId}", productId);
                     _logger.LogWarning("Stock Producto: {Product}", product.Stock);
                     _logger.LogWarning("Cantidad a agregar: {Quantity}", quantity);
-                    _logger.LogWarning("Cantidad en carrito: {QuantityInBasket}",  productInBasket.Quantity);
+                    _logger.LogWarning("Cantidad en carrito: {QuantityInBasket}", productInBasket.Quantity);
                     _logger.LogWarning("Cantidad total: {TotalQuantity}", productInBasket.Quantity + quantity);
                     if (productInBasket != null && (product.Stock < productInBasket.Quantity + quantity || product.Stock < quantity))
-                    return BadRequest(new ApiResponse<string>(false, $"Solo hay {product.Stock} unidades disponibles de '{product.Title}'"));
+                        return BadRequest(new ApiResponse<string>(false, $"Solo hay {product.Stock} unidades disponibles de '{product.Title}'"));
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 _logger.LogError(ex, "Error al agregar producto al carrito");
                 return BadRequest(new ApiResponse<string>(false, "Ocurrió un error inesperado"));
             }
-            
+
         }
 
         [HttpDelete]
@@ -113,7 +113,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 _logger.LogError(ex, "Error al eliminar producto del carrito");
                 return BadRequest(new ApiResponse<string>(false, "Ocurrió un error inesperado"));
             }
-            
+
         }
 
         private async Task<Basket?> RetrieveBasket()
@@ -121,7 +121,7 @@ namespace TallerIDWM_Backend.Src.Controllers
             var basketId = Request.Cookies["basketId"];
             _logger.LogInformation("BasketId recibido desde cookie: {BasketId}", basketId);
             return string.IsNullOrEmpty(basketId) ? null : await _context.BasketRepository.GetBasketAsync(basketId);
-        }    
+        }
 
         private Basket CreateBasket()
         {
