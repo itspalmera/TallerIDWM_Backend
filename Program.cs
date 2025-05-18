@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using System.Text;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 using Serilog;
 
 using TallerIDWM_Backend.Src.Data;
