@@ -16,7 +16,7 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             _dataContext.Products.Remove(product);
         }
-        public async Task RemoveProduct(Product product)
+        public async Task RemoveProductAsync(Product product)
         {
             var existingProduct = await _dataContext.Products.FindAsync(product.Id);
             if (existingProduct != null)

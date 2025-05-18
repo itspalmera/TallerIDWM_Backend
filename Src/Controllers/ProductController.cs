@@ -171,7 +171,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 // if (product.Orders.Count > 0) 
                 // {
                 //     // Cambiar el estado del producto a no visible
-                //     product.IsVisible = false;
+                //     await _context.ProductRepository.RemoveProductAsync(product);
                 //     return Ok(new ApiResponse<ProductDtoAdmin>(
                 //         true, 
                 //         "Producto removido correctamente, pero tiene órdenes asociadas. Se ha cambiado su estado a no visible.", 
