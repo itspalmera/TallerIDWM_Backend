@@ -265,6 +265,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 product.Category = updateProductDto.Category ?? product.Category;
                 product.Brand = updateProductDto.Brand ?? product.Brand;
                 product.ProductCondition = updateProductDto.Condition ?? product.ProductCondition;
+                product.UpdatedAt = DateTime.UtcNow;
 
                 await _context.ProductRepository.UpdateProductAsync(product);
                 await _context.SaveChangesAsync();
