@@ -10,9 +10,6 @@ using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.RequestHelpers;
 
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-
 namespace TallerIDWM_Backend.Src.Controllers
 {
     [ApiController]
@@ -177,6 +174,16 @@ namespace TallerIDWM_Backend.Src.Controllers
                 //         "Producto removido correctamente, pero tiene órdenes asociadas. Se ha cambiado su estado a no visible.", 
                 //         product.MapToProductDtoAdmin()));
                 // }
+
+                // Eliminar todas las imágenes del producto de Cloudinary
+                foreach (var url in product.ProductImages.Select(x => x.Url))
+                {
+                    var oldPublicId = CloudinaryHelper.ExtractPublicIdFromUrl(url);
+                    if (!string.IsNullOrEmpty(oldPublicId))
+                    {
+                        await _photoService.DeletePhotoAsync(oldPublicId);
+                    }
+                }
 
                 // Si no tiene órdenes asociadas, eliminar el producto
                 await _context.ProductRepository.DeleteProduct(product);
