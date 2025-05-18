@@ -179,7 +179,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 // }
 
                 // Si no tiene órdenes asociadas, eliminar el producto
-                _context.ProductRepository.DeleteProduct(product);
+                await _context.ProductRepository.DeleteProduct(product);
                 await _context.SaveChangesAsync();
                 var response = new ApiResponse<ProductDtoAdmin>(
                     true,
@@ -215,32 +215,39 @@ namespace TallerIDWM_Backend.Src.Controllers
                     return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
                 }
 
-                if (updateProductDto.ImagesToDelete != null && updateProductDto.ImagesToDelete.Any())
+                // Si se sube una nueva imagen, elimina la anterior y actualiza la URL
+                if (updateProductDto.Images != null && updateProductDto.Images.Count > 0)
                 {
-                    foreach (var url in product.ProductImages.Select(i => i.Url))
+                    // Elimina todas las imágenes anteriores de Cloudinary y de la base de datos
+                    foreach (var url in product.ProductImages.Select(x => x.Url))
                     {
-                        if (updateProductDto.ImagesToDelete.Contains(url))
+                        var oldPublidId = CloudinaryHelper.ExtractPublicIdFromUrl(url);
+                        if (!string.IsNullOrEmpty(oldPublidId))
                         {
-                            var publicId = CloudinaryHelper.ExtractPublicIdFromUrl(url);
-                            if (!string.IsNullOrEmpty(publicId))
-                            {
-                                await _photoService.DeletePhotoAsync(publicId);
-                            }
-                        } 
+                            await _photoService.DeletePhotoAsync(oldPublidId);
+                        }
                     }
-                }
+                    
+                    // Elimina las imágenes de la base de datos
+                    await _context.ProductRepository.RemoveAllProductsImagesAsync(product);
 
-                if (updateProductDto.ImagesToAdd != null && updateProductDto.ImagesToAdd.Count > 0)
-                {
-                    foreach (var image in updateProductDto.ImagesToAdd)
+                    // Sube la nueva imagen y actualiza la URL en la base de datos
+                    foreach (var image in updateProductDto.Images)
                     {
                         var uploadResult = await _photoService.AddPhotoAsync(image);
                         if (uploadResult.Error != null)
                         {
-                            return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al subir la imagen.", null, [uploadResult.Error.Message]));
+                            return BadRequest(new ApiResponse<ProductDtoAdmin>(
+                                false,
+                                "Error al subir la imagen.",
+                                null,
+                                new List<string> { uploadResult.Error.Message }));
                         }
-
-                        product.ProductImages.Add(new ProductImage { Url = uploadResult.SecureUrl.AbsoluteUri, PublicId = uploadResult.PublicId });
+                        product.ProductImages.Add(new ProductImage
+                        {
+                            Url = uploadResult.SecureUrl.AbsoluteUri,
+                            PublicId = uploadResult.PublicId
+                        });
                     }
                 }
 
@@ -252,7 +259,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 product.Brand = updateProductDto.Brand ?? product.Brand;
                 product.ProductCondition = updateProductDto.Condition ?? product.ProductCondition;
 
-                _context.ProductRepository.UpdateProduct(product);
+                await _context.ProductRepository.UpdateProductAsync(product);
                 await _context.SaveChangesAsync();
                 var response = new ApiResponse<ProductDtoAdmin>(
                     true,

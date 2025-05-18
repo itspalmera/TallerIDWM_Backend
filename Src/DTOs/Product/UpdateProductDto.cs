@@ -29,7 +29,6 @@ namespace TallerIDWM_Backend.Src.DTOs.Product
         public string? Brand { get; set; }
         [EnumDataType(typeof(ProductCondition), ErrorMessage = "El estado del producto no es válido.")]
         public ProductCondition? Condition { get; set; } 
-        public List<IFormFile>? ImagesToAdd { get; set; }
-        public List<string>? ImagesToDelete { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 }

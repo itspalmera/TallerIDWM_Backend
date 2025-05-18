@@ -12,18 +12,16 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             await _dataContext.Products.AddAsync(product);
         }
-        public void DeleteProduct(Product product)
+        public Task DeleteProduct(Product product)
         {
             _dataContext.Products.Remove(product);
+            return Task.CompletedTask;
         }
-        public async Task RemoveProductAsync(Product product)
+        public Task RemoveProductAsync(Product product)
         {
-            var existingProduct = await _dataContext.Products.FindAsync(product.Id);
-            if (existingProduct != null)
-            {
-                existingProduct.IsVisible = false;
-                _dataContext.Products.Update(existingProduct);
-            }
+            product.IsVisible = false;
+            _dataContext.Products.Update(product);
+            return Task.CompletedTask;
         }
         public async Task<List<Product>> GetProductsAsync()
         {
@@ -33,10 +31,19 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             return await _dataContext.Products.Include(p => p.ProductImages).FirstAsync(p => p.Id == id);
         }
-        public void UpdateProduct(Product product)
+        public Task UpdateProductAsync(Product product)
         {
             _dataContext.Products.Update(product);
+            return Task.CompletedTask;
         }
+
+        public Task RemoveAllProductsImagesAsync(Product product)
+        {
+            product.ProductImages.Clear();
+            _dataContext.Products.Update(product);
+            return Task.CompletedTask;
+        }
+
         public IQueryable<Product> GetQueryableProducts()
         {
             return _dataContext.Products.Include(p => p.ProductImages).Where(p => p.IsVisible == true).AsQueryable();
