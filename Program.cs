@@ -13,6 +13,7 @@ using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.Repository;
 using TallerIDWM_Backend.Src.Services;
+using TallerIDWM_Backend.Src.Services;
 
 Log.Logger = new LoggerConfiguration()
 

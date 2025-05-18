@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Microsoft.Net.Http.Headers;
 
@@ -18,7 +14,7 @@ namespace TallerIDWM_Backend.Src.Extensions
 
             response.Headers.Append("Pagination", JsonSerializer.Serialize(metadata, options));
             response.Headers.Append(HeaderNames.AccessControlExposeHeaders, "Pagination");
-
         }
+
     }
 }

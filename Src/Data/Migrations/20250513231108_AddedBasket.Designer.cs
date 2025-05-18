@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TallerIDWM_Backend.Src.Data;
 
@@ -10,9 +11,11 @@ using TallerIDWM_Backend.Src.Data;
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250513231108_AddedBasket")]
+    partial class AddedBasket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -62,27 +65,26 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Commune")
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("city")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Number")
+                    b.Property<string>("number")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PostalCode")
+                    b.Property<string>("state")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Region")
+                    b.Property<string>("street")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("zipCode")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -115,13 +117,13 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsNew")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsVisible")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Price")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductCondition")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Stock")
@@ -148,9 +150,8 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PublicId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -163,12 +164,25 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.User", b =>
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Role", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("AccessFailedCount")
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Active")
@@ -177,66 +191,24 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.Property<DateOnly>("BirthDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DeactivationReason")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("LastAccess")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("LockoutEnabled")
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateOnly>("Registered")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

@@ -9,29 +9,38 @@ namespace TallerIDWM_Backend.Src.Repository
     public class ProductRepository(DataContext dataContext) : IProductRepository
     {
         private readonly DataContext _dataContext = dataContext;
-        public Task AddProductAsync(Product product)
+        public async Task AddProductAsync(Product product)
         {
-            throw new NotImplementedException();
+            await _dataContext.Products.AddAsync(product);
         }
-
-        public Task DeleteProductAsync(int id)
+        public void DeleteProduct(Product product)
         {
-            throw new NotImplementedException();
+            _dataContext.Products.Remove(product);
         }
-
-        public async Task<List<Product>> GetAllProductsAsync()
+        public async Task RemoveProduct(Product product)
         {
-            return await _dataContext.Products.ToListAsync();
+            var existingProduct = await _dataContext.Products.FindAsync(product.Id);
+            if (existingProduct != null)
+            {
+                existingProduct.IsVisible = false;
+                _dataContext.Products.Update(existingProduct);
+            }
         }
-
-        public Task<Product> GetProductByIdAsync(int id)
+        public async Task<List<Product>> GetProductsAsync()
         {
-            throw new NotImplementedException();
+            return await _dataContext.Products.Include(p => p.ProductImages).ToListAsync();
         }
-
-        public Task UpdateProductAsync(Product product)
+        public async Task<Product> GetProductByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Products.Include(p => p.ProductImages).FirstAsync(p => p.Id == id);
+        }
+        public void UpdateProduct(Product product)
+        {
+            _dataContext.Products.Update(product);
+        }
+        public IQueryable<Product> GetQueryableProducts()
+        {
+            return _dataContext.Products.Include(p => p.ProductImages).Where(p => p.IsVisible == true).AsQueryable();
         }
     }
 }
