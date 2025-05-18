@@ -24,6 +24,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<ProductDto>>>> GetProducts([FromQuery] ProductParams productParams)
         {
+            _logger.LogInformation("Solicitud para obtener productos recibida. Parámetros: {@ProductParams}", productParams);
             try
             {
                 // Obtener todos los productos visibles
@@ -46,6 +47,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     "Productos obtenidos correctamente.",
                     pagedList.Select(p => p.MapToProductDto()));
 
+                _logger.LogInformation("Productos obtenidos correctamente. Total: {Count}", pagedList.Count);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -60,6 +62,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         // [Authorize(Roles = "Administrador")]
         public async Task<ActionResult<ApiResponse<IEnumerable<ProductDtoAdmin>>>> GetAllProducts([FromQuery] ProductParams productParams)
         {
+            _logger.LogInformation("Solicitud para obtener productos (vista admin) recibida. Parámetros: {@ProductParams}", productParams);
             try
             {
                 // Obtener todos los productos 
@@ -82,6 +85,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     "Productos obtenidos correctamente.",
                     pagedList.Select(p => p.MapToProductDtoAdmin()));
 
+                _logger.LogInformation("Productos (vista admin) obtenidos correctamente. Total: {Count}", pagedList.Count);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -94,6 +98,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> GetProduct(int id)
         {
+            _logger.LogInformation("Solicitud para obtener producto por ID: {Id}", id);
             try
             {
                 var product = await _context.ProductRepository.GetProductByIdAsync(id);
@@ -101,11 +106,12 @@ namespace TallerIDWM_Backend.Src.Controllers
                     true,
                     "Producto encontrado correctamente.",
                     product.MapToProductDtoAdmin());
+                _logger.LogInformation("Producto con ID {Id} encontrado correctamente.", id);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener el producto mediante el título de este.");
+                _logger.LogError(ex, "Error al obtener el producto mediante el id de este.");
                 return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
             }
         }
@@ -114,10 +120,12 @@ namespace TallerIDWM_Backend.Src.Controllers
         // Authorize(Roles = "Administrador")]
         public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> AddProduct([FromForm] CreateProductDto createProductDto)
         {
+            _logger.LogInformation("Solicitud para agregar producto recibida. Título: {Title}", createProductDto.Title);
             try
             {
                 if (!ModelState.IsValid)
                 {
+                    _logger.LogWarning("Error de validación al agregar producto: {@Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
                     return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
                 }
 
@@ -128,9 +136,11 @@ namespace TallerIDWM_Backend.Src.Controllers
                     var uploadResult = await _photoService.AddPhotoAsync(image);
                     if (uploadResult.Error != null)
                     {
+                        _logger.LogWarning("Error al subir la imagen: {Error}", uploadResult.Error.Message);
                         return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error al subir la imagen.", null, new List<string> { uploadResult.Error.Message }));
                     }
 
+                    _logger.LogInformation("Imagen subida correctamente: {Url}", uploadResult.SecureUrl.AbsoluteUri);
                     urls.Add(new ProductImage { Url = uploadResult.SecureUrl.AbsoluteUri, PublicId = uploadResult.PublicId });
                 }
 
@@ -144,6 +154,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     "Producto agregado correctamente.",
                     product.MapToProductDtoAdmin());
 
+                _logger.LogInformation("Producto agregado correctamente. ID: {Id}", product.Id);
                 return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
             }
             catch (Exception ex)
@@ -157,11 +168,13 @@ namespace TallerIDWM_Backend.Src.Controllers
         // [Authorize(Roles = "Administrador")]
         public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> RemoveProduct(int id)
         {
+            _logger.LogInformation("Solicitud para eliminar producto recibida. ID: {Id}", id);
             try
             {
                 var product = await _context.ProductRepository.GetProductByIdAsync(id);
                 if (product == null)
                 {
+                    _logger.LogWarning("Intento de eliminar producto no encontrado. ID: {Id}", id);
                     return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
                 }
                 // Lógica para verificar si el producto tiene órdenes asociadas
@@ -185,6 +198,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     }
                 }
 
+                _logger.LogInformation("Imágenes del producto eliminadas de Cloudinary.");
                 // Si no tiene órdenes asociadas, eliminar el producto
                 await _context.ProductRepository.DeleteProduct(product);
                 await _context.SaveChangesAsync();
@@ -193,6 +207,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     "Producto eliminado correctamente.",
                     product.MapToProductDtoAdmin());
 
+                _logger.LogInformation("Producto eliminado correctamente. ID: {Id}", id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -205,11 +220,13 @@ namespace TallerIDWM_Backend.Src.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> UpdateProduct(int id, [FromForm] UpdateProductDto updateProductDto)
         {
+            _logger.LogInformation("Solicitud para actualizar producto recibida. ID: {Id}", id);
             try
             {
                 // Validar el modelo
                 if (!ModelState.IsValid)
                 {
+                    _logger.LogWarning("Error de validación al actualizar producto: {@Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
                     return BadRequest(new ApiResponse<ProductDtoAdmin>(false, "Error en los datos de entrada.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
                 }
 
@@ -219,6 +236,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                 // Verificar si el producto existe
                 if (product == null)
                 {
+                    _logger.LogWarning("Intento de actualizar producto no encontrado. ID: {Id}", id);
                     return NotFound(new ApiResponse<ProductDtoAdmin>(false, "El producto no fue encontrado."));
                 }
 
@@ -234,9 +252,13 @@ namespace TallerIDWM_Backend.Src.Controllers
                             await _photoService.DeletePhotoAsync(oldPublidId);
                         }
                     }
-                    
+
+                    _logger.LogInformation("Imágenes del producto eliminadas de Cloudinary.");
+
                     // Elimina las imágenes de la base de datos
                     await _context.ProductRepository.RemoveAllProductsImagesAsync(product);
+
+                    _logger.LogInformation("Imágenes del producto eliminadas de la base de datos.");
 
                     // Sube la nueva imagen y actualiza la URL en la base de datos
                     foreach (var image in updateProductDto.Images)
@@ -244,18 +266,21 @@ namespace TallerIDWM_Backend.Src.Controllers
                         var uploadResult = await _photoService.AddPhotoAsync(image);
                         if (uploadResult.Error != null)
                         {
+                            _logger.LogWarning("Error al subir la imagen durante actualización: {Error}", uploadResult.Error.Message);
                             return BadRequest(new ApiResponse<ProductDtoAdmin>(
                                 false,
                                 "Error al subir la imagen.",
                                 null,
                                 new List<string> { uploadResult.Error.Message }));
                         }
+
                         product.ProductImages.Add(new ProductImage
                         {
                             Url = uploadResult.SecureUrl.AbsoluteUri,
                             PublicId = uploadResult.PublicId
                         });
                     }
+                    _logger.LogInformation("Nuevas imágenes subidas correctamente.");
                 }
 
                 product.Title = updateProductDto.Title ?? product.Title;
@@ -274,6 +299,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     "Producto actualizado correctamente.",
                     product.MapToProductDtoAdmin());
 
+                _logger.LogInformation("Producto actualizado correctamente. ID: {Id}", id);
                 return Ok(response);
             }
             catch (Exception ex)
