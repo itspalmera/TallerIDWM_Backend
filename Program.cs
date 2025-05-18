@@ -25,6 +25,7 @@ try
 
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IBasketRepository, BasketRepository>();
     builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
 
     builder.Services.AddScoped<ITokenServices, TokenService>();
