@@ -7,8 +7,10 @@ namespace TallerIDWM_Backend.Src.Interfaces
         Task<List<Product>> GetProductsAsync();
         Task<Product> GetProductByIdAsync(int id);
         Task AddProductAsync(Product product);
-        void UpdateProduct(Product product);
-        void DeleteProduct(Product product);
+        Task UpdateProductAsync(Product product);
+        Task RemoveAllProductsImagesAsync(Product product);
+        Task DeleteProduct(Product product);
+        Task RemoveProductAsync(Product product);
         IQueryable<Product> GetQueryableProducts();
     }
 }

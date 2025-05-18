@@ -43,8 +43,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 Category = product.Category,
                 Brand = product.Brand,
                 Condition = product.ProductCondition.ToString(),
-                CreatedAt = product.CreatedAt,
-                UpdatedAt = product.UpdatedAt
+                LastModification = product.UpdatedAt ?? product.CreatedAt
             };
         }
     }

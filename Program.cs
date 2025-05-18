@@ -12,16 +12,17 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 try
 {
-    Log.Information("starting server.");
+    Log.Information("Inicializando la aplicación...");
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
-    builder.Services.AddDbContext<DataContext>(options => 
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBasketRepository, BasketRepository>();
     builder.Services.AddScoped<IPhotoService, PhotoService>();
     builder.Services.AddScoped<UnitOfWork>();
+    builder.Services.AddDbContext<DataContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         configuration
@@ -32,11 +33,27 @@ try
 
     });
 
+    var corsSettings = builder.Configuration.GetSection("CorsSettings");
+    var allowedOrigins = corsSettings.GetSection("AllowedOrigins").Get<string[]>();
+    var allowedMethods = corsSettings.GetSection("AllowedMethods").Get<string[]>();
+    var allowedHeaders = corsSettings.GetSection("AllowedHeaders").Get<string[]>();
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DefaultCorsPolicy", policy =>
+        {
+            policy.WithOrigins(allowedOrigins!)
+                  .WithHeaders(allowedHeaders!)
+                  .WithMethods(allowedMethods!)
+                  .AllowCredentials();
+        });
+    });
+
     // Configurar logging
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.AddDebug();
-    
+
     var app = builder.Build();
 
     using (var scope = app.Services.CreateScope())
@@ -51,12 +68,13 @@ try
         DataSeeder.Initialize(services);
     }
 
+    app.UseCors("DefaultCorsPolicy");
     app.MapControllers();
     app.Run();
-    }
+}
 catch (Exception ex)
 {
-    Log.Fatal(ex, "server terminated unexpectedly");
+    Log.Fatal(ex, "La aplicación falló al iniciar");
 }
 finally
 {

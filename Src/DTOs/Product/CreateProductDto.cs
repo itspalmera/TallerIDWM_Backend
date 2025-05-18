@@ -15,11 +15,11 @@ namespace TallerIDWM_Backend.Src.DTOs
         public required string Description { get; set; }
 
         [Required(ErrorMessage = "El precio es requerido.")]
-        [Range(100, 10000000, ErrorMessage = "El precio debe estar entre 100 y 10,000,000 en pesos chilenos.")]
+        [Range(100, 100000000, ErrorMessage = "El precio debe estar entre 100 y 100,000,000 en pesos chilenos.")]
         public required int Price { get; set; }
 
         [Required(ErrorMessage = "El stock es requerido.")]
-        [Range(1, 10000, ErrorMessage = "El stock debe estar entre 1 y 10000 unidades.")]
+        [Range(1, 100000, ErrorMessage = "El stock debe estar entre 1 y 100000 unidades.")]
         public required int Stock { get; set; }
 
         [Required(ErrorMessage = "La categoría es requerida.")]
@@ -31,6 +31,7 @@ namespace TallerIDWM_Backend.Src.DTOs
         public required string Brand { get; set; }
 
         [Required(ErrorMessage = "El estado del producto es requerido.")]
+        [EnumDataType(typeof(ProductCondition), ErrorMessage = "El estado del producto no es válido.")]
         public required ProductCondition Condition { get; set; }
 
         [Required]
