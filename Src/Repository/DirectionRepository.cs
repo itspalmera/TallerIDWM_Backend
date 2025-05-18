@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
-using TallerIDWM_Backend.Src.Models;
-using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Data;
+using TallerIDWM_Backend.Src.Interfaces;
+using TallerIDWM_Backend.Src.Models;
 
 
 namespace TallerIDWM_Backend.Src.Repository
@@ -31,6 +31,6 @@ namespace TallerIDWM_Backend.Src.Repository
         {
             _context.Directions.Update(address);
         }
-        
+
     }
 }

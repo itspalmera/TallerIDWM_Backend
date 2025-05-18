@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace TallerIDWM_Backend.Src.DTOs
 {
@@ -16,8 +16,8 @@ namespace TallerIDWM_Backend.Src.DTOs
         [Required(ErrorMessage = "El número es requerido")]
         [RegularExpression(@"^\d+$", ErrorMessage = "El número debe ser un valor numérico")]
         public required string number { get; set; }
-        
-        
+
+
         [Required(ErrorMessage = "La comuna es requerida")]
         [StringLength(100, ErrorMessage = "La comuna no puede exceder los 100 caracteres")]
         public required string commune { get; set; }

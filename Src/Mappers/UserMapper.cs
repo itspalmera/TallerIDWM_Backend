@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.DTOs.Auth;
 using TallerIDWM_Backend.Src.DTOs.User;
-using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Mappers
@@ -30,7 +30,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                     Region = dto.region ?? string.Empty,
                     PostalCode = dto.postalCode ?? string.Empty
                 }
-        };
+            };
 
 
         public static UserDto UserToUserDto(User user) =>
@@ -49,7 +49,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 lastAccess = user.LastAccess,
                 active = user.Active
             };
-            
+
 
         public static AuthenticatedUserDto UserToAuthenticatedDto(User user, string token) =>
             new()
@@ -89,4 +89,3 @@ namespace TallerIDWM_Backend.Src.Mappers
         }
     }
 }
-

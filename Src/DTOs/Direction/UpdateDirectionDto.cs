@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace TallerIDWM_Backend.Src.DTOs.Direction
 {
@@ -27,6 +27,6 @@ namespace TallerIDWM_Backend.Src.DTOs.Direction
 
         [RegularExpression(@"^\d{7}$", ErrorMessage = "El código postal debe tener 7 dígitos")]
         public string? postalCode { get; set; }
-        
+
     }
 }

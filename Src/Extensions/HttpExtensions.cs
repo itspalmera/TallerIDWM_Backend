@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-using TallerIDWM_Backend.Src.RequestHelpers;
-
 using Microsoft.Net.Http.Headers;
-using System.Text.Json;
+
+using TallerIDWM_Backend.Src.RequestHelpers;
 
 namespace TallerIDWM_Backend.Src.Extensions
 {

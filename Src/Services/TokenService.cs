@@ -6,10 +6,10 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
+using Microsoft.IdentityModel.Tokens;
+
 using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Models;
-
-using Microsoft.IdentityModel.Tokens;
 
 namespace TallerIDWM_Backend.Src.Services
 {

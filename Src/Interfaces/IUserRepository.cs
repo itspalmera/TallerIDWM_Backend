@@ -23,7 +23,7 @@ namespace TallerIDWM_Backend.Src.Interfaces
 
         Task<User?> GetUserWithAddressByIdAsync(string userId);
 
-        Task <IdentityResult> UpdatePasswordAsync(User user, string currentPassword, string newPassword);
+        Task<IdentityResult> UpdatePasswordAsync(User user, string currentPassword, string newPassword);
 
         Task<IList<string>> GetUserRolesAsync(User user);
 

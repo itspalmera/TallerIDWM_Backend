@@ -3,9 +3,9 @@ using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-using TallerIDWM_Backend.Src.Models;
-using TallerIDWM_Backend.Src.Data.Seeders;
 using TallerIDWM_Backend.Src.Data;
+using TallerIDWM_Backend.Src.Data.Seeders;
+using TallerIDWM_Backend.Src.Models;
 
 namespace TallerIDWM_Backend.Src.Data
 {

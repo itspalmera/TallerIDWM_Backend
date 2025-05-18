@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using TallerIDWM_Backend.Src.Data;
+using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.DTOs.Auth;
 using TallerIDWM_Backend.Src.DTOs.User;
-using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
-using TallerIDWM_Backend.Src.Data;
 
 namespace TallerIDWM_Backend.Src.Controllers
 {
@@ -78,7 +78,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
                 var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(loginDto.email);
 
-                
+
                 if (user == null)
                 {
                     return Unauthorized(new ApiResponse<string>(false, "Correo o contraseña inválidos"));
@@ -95,7 +95,7 @@ namespace TallerIDWM_Backend.Src.Controllers
                     return Unauthorized(new ApiResponse<string>(false, "Correo o contraseña inválidos"));
                 }
 
-                
+
                 user.LastAccess = DateOnly.FromDateTime(DateTime.UtcNow);
                 await _userManager.UpdateAsync(user);
 

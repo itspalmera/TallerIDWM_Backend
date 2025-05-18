@@ -4,21 +4,21 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.DTOs.Auth;
+using TallerIDWM_Backend.Src.DTOs.Direction;
 using TallerIDWM_Backend.Src.DTOs.User;
-using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Extensions;
+using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.RequestHelpers;
-
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TallerIDWM_Backend.Src.DTOs.Direction;
 
 namespace TallerIDWM_Backend.Src.Controller
 {
@@ -28,7 +28,7 @@ namespace TallerIDWM_Backend.Src.Controller
     {
         private readonly ILogger<UserController> _logger = logger;
         private readonly UnitOfWork _unitOfWork = unitOfWork;
-        
+
 
 
         //TODO: GET ALL WITH PAGINATION AND FILTERING
@@ -70,7 +70,8 @@ namespace TallerIDWM_Backend.Src.Controller
             if (email == null && name == null)
                 return BadRequest(new ApiResponse<string>(false, "Se requiere un email o nombre para buscar el usuario"));
 
-            if (email is null){
+            if (email is null)
+            {
                 var user = await _unitOfWork.UserRepository.GetUserByNameAsync(name);
                 if (user == null)
                     return NotFound(new ApiResponse<string>(false, "Usuario no encontrado"));
@@ -80,7 +81,8 @@ namespace TallerIDWM_Backend.Src.Controller
             }
 
 
-            else{
+            else
+            {
                 var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(email);
                 if (user == null)
                     return NotFound(new ApiResponse<string>(false, "Usuario no encontrado (email"));
@@ -88,8 +90,8 @@ namespace TallerIDWM_Backend.Src.Controller
                 var dto = UserMapper.UserToUserDto(user);
                 return Ok(new ApiResponse<UserDto>(true, "Usuario encontrado", dto));
             }
-            
-            
+
+
         }
 
 
@@ -173,7 +175,7 @@ namespace TallerIDWM_Backend.Src.Controller
             return Ok(new ApiResponse<UserDto>(true, "Perfil actualizado correctamente", UserMapper.UserToUserDto(user)));
         }
 
-        
+
         //TODO: UPDATE PASSWORD
         [Authorize(Roles = "User")]
         [HttpPatch("profile/password")]
@@ -236,7 +238,7 @@ namespace TallerIDWM_Backend.Src.Controller
             var address = await _unitOfWork.DirectionRepository.GetByUserIdAsync(userId);
             if (address == null)
                 return NotFound(new ApiResponse<string>(false, "No tienes una dirección registrada. Usa el método POST para crear una."));
-            
+
             DirectionMapper.UpdateDirectionFromDto(address, dto);
 
             await _unitOfWork.SaveChangesAsync();
@@ -246,5 +248,5 @@ namespace TallerIDWM_Backend.Src.Controller
 
     }
 
-    
+
 }

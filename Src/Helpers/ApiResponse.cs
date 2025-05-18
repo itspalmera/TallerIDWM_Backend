@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TallerIDWM_Backend.Src.Helpers
 {
-     public class ApiResponse<T>(bool success, string message, T? data = default, List<string>? errors = null)
+    public class ApiResponse<T>(bool success, string message, T? data = default, List<string>? errors = null)
     {
         public bool Success { get; set; } = success;
         public string Message { get; set; } = message;

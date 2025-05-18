@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.DTOs.Direction;
+using TallerIDWM_Backend.Src.Models;
 
 
 namespace TallerIDWM_Backend.Src.Mappers
@@ -26,7 +26,7 @@ namespace TallerIDWM_Backend.Src.Mappers
             };
         }
 
-        
+
         public static DirectionDto ToDto(Direction shippingAddress)
         {
             return new DirectionDto
@@ -44,7 +44,7 @@ namespace TallerIDWM_Backend.Src.Mappers
         {
             if (dto.street is not null)
                 direction.Street = dto.street;
-                
+
 
             if (dto.number is not null)
                 direction.Number = dto.number;
