@@ -28,7 +28,7 @@ namespace TallerIDWM_Backend.Src.DTOs.Product
         [StringLength(50, MinimumLength = 3, ErrorMessage = "La marca debe tener entre 3 y 50 caracteres.")]
         public string? Brand { get; set; }
         [EnumDataType(typeof(ProductCondition), ErrorMessage = "El estado del producto no es válido.")]
-        public ProductCondition? Condition { get; set; } 
+        public ProductCondition? Condition { get; set; }
         public List<IFormFile>? Images { get; set; }
     }
 }
