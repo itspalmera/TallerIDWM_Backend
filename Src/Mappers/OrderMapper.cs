@@ -38,7 +38,7 @@ namespace TallerIDWM_Backend.Src.Mappers
             {
                 id = order.Id,
                 createdAt = order.OrderDate,
-                address = order.ShippingAddress,
+                address = order.Address,
                 total = (int)Math.Floor(order.Total),
                 items = order.Items.Select(i => new OrderItemDto
                 {
