@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.EntityFrameworkCore;
 
-using TallerIDWM_Backend.Src.Models;
-using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Data;
+using TallerIDWM_Backend.Src.Interfaces;
+using TallerIDWM_Backend.Src.Models;
 
 
 namespace TallerIDWM_Backend.Src.Repository

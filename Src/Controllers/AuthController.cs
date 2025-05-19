@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Dtos;
-using TallerIDWM_Backend.Src.DTOs.Auth;
-using TallerIDWM_Backend.Src.DTOs.User;
+using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Mappers;

@@ -7,7 +7,7 @@ using Bogus;
 
 using Microsoft.AspNetCore.Identity;
 
-using TallerIDWM_Backend.Src.DTOs.Auth;
+using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
 
