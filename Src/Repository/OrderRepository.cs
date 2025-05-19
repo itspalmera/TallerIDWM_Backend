@@ -45,5 +45,10 @@ namespace TallerIDWM_Backend.Src.Repository
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
+
+        public IQueryable<Order> GetOrdersQueryable()
+        {
+            return _context.Orders.Include(u => u.Address).AsQueryable();
+        }
     }
 }

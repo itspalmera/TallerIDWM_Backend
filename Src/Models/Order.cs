@@ -14,7 +14,7 @@ namespace TallerIDWM_Backend.Src.Models
 
         // NUEVO: FK a ShippingAddress
         public int ShippingAddressId { get; set; }
-        public Direction ShippingAddress { get; set; } = null!;
+        public Direction Address { get; set; } = null!;
 
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public string Status { get; set; } = "Creado";

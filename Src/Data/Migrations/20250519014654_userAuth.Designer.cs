@@ -11,7 +11,7 @@ using TallerIDWM_Backend.Src.Data;
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250518235858_userAuth")]
+    [Migration("20250519014654_userAuth")]
     partial class userAuth
     {
         /// <inheritdoc />

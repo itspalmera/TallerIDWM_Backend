@@ -12,6 +12,8 @@ using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
+using TallerIDWM_Backend.Src.RequestHelpers;
+using TallerIDWM_Backend.Src.Repository;
 
 
 namespace TallerIDWM_Backend.Src.Controllers
@@ -25,6 +27,8 @@ namespace TallerIDWM_Backend.Src.Controllers
         private readonly ILogger<OrderController> _logger = logger;
 
 
+
+        //TODO: CREATE ORDER
         [HttpPost]
         public async Task<ActionResult<ApiResponse<OrderDto>>> CreateOrder()
         {
@@ -70,10 +74,13 @@ namespace TallerIDWM_Backend.Src.Controllers
         }
 
 
+
+        //TODO: GET ORDERS
         [Authorize(Roles = "User")]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<OrderSummaryDto>>>> GetMyOrders()
+        public async Task<ActionResult<ApiResponse<IEnumerable<OrderSummaryDto>>>> GetMyOrders([FromQuery] OrderParams orderParams)
         {
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId is null)
                 return Unauthorized(new ApiResponse<string>(false, "Usuario no autenticado"));
@@ -85,6 +92,8 @@ namespace TallerIDWM_Backend.Src.Controllers
         }
 
 
+
+        //TODO: GET ORDER BY ID
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<OrderDto>>> GetOrderById(int id)
         {
