@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace TallerIDWM_Backend.Src.Models
 {
-    public class Role
+    public enum ProductCondition
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-
+        Nuevo,
+        Usado
     }
 }
