@@ -9,10 +9,10 @@ namespace TallerIDWM_Backend.Src.DTOs
 {
     public class OrderDto
     {
-        public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int id { get; set; }
+        public DateTime createdAt { get; set; }
         public Direction address { get; set; } = null!;
-        public int Total { get; set; } // En CLP, sin decimales
-        public List<OrderItemDto> Items { get; set; } = [];
+        public int total { get; set; } // En CLP, sin decimales
+        public List<OrderItemDto> items { get; set; } = [];
     }
 }
