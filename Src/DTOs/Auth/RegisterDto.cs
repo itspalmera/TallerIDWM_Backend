@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TallerIDWM_Backend.Src.DTOs.Auth
+namespace TallerIDWM_Backend.Src.DTOs
 {
     public class RegisterDto
     {
