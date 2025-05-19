@@ -11,8 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Dtos;
 using TallerIDWM_Backend.Src.DTOs;
-using TallerIDWM_Backend.Src.DTOs.Auth;
-using TallerIDWM_Backend.Src.DTOs.Direction;
 using TallerIDWM_Backend.Src.DTOs.User;
 using TallerIDWM_Backend.Src.Extensions;
 using TallerIDWM_Backend.Src.Helpers;

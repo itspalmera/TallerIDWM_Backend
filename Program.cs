@@ -28,6 +28,7 @@ try
     builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
     builder.Services.AddScoped<IBasketRepository, BasketRepository>();
     builder.Services.AddScoped<ITokenServices, TokenService>();
+    builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
     builder.Services.AddScoped<UnitOfWork>();
 

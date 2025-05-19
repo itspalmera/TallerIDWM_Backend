@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using TallerIDWM_Backend.Src.Dtos;
-using TallerIDWM_Backend.Src.DTOs.Auth;
+using TallerIDWM_Backend.Src.DTOs;
 using TallerIDWM_Backend.Src.DTOs.User;
 using TallerIDWM_Backend.Src.Models;
 
