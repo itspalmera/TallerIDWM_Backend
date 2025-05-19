@@ -26,7 +26,7 @@ try
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
-
+    builder.Services.AddScoped<IBasketRepository, BasketRepository>();
     builder.Services.AddScoped<ITokenServices, TokenService>();
 
     builder.Services.AddScoped<UnitOfWork>();
@@ -119,6 +119,10 @@ try
 }
 catch (Exception ex)
 {
+    Log.Fatal(ex, "La aplicación falló al iniciar");
+    Console.WriteLine("ERROR CRÍTICO:");
+    Console.WriteLine(ex.Message);
+    Console.WriteLine(ex.StackTrace);
     Log.Fatal(ex, "La aplicación falló al iniciar");
 }
 finally
