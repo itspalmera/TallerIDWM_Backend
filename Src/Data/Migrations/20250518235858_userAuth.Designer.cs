@@ -11,8 +11,8 @@ using TallerIDWM_Backend.Src.Data;
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250517233237_AddUserExample")]
-    partial class AddUserExample
+    [Migration("20250518235858_userAuth")]
+    partial class userAuth
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -162,6 +162,45 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Basket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BasketId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Baskets");
+                });
+
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.BasketItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BasketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasketId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("BasketItems");
+                });
+
             modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Direction", b =>
                 {
                     b.Property<int>("Id")
@@ -200,6 +239,67 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.ToTable("Directions");
                 });
 
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ShippingAddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShippingAddressId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItem");
+                });
+
             modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -221,13 +321,13 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsNew")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsVisible")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Price")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductCondition")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Stock")
@@ -254,8 +354,9 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PublicId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -406,6 +507,25 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.BasketItem", b =>
+                {
+                    b.HasOne("TallerIDWM_Backend.Src.Models.Basket", "Basket")
+                        .WithMany("Items")
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TallerIDWM_Backend.Src.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Basket");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Direction", b =>
                 {
                     b.HasOne("TallerIDWM_Backend.Src.Models.User", "User")
@@ -417,6 +537,36 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Order", b =>
+                {
+                    b.HasOne("TallerIDWM_Backend.Src.Models.Direction", "ShippingAddress")
+                        .WithMany()
+                        .HasForeignKey("ShippingAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TallerIDWM_Backend.Src.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShippingAddress");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.OrderItem", b =>
+                {
+                    b.HasOne("TallerIDWM_Backend.Src.Models.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("TallerIDWM_Backend.Src.Models.ProductImage", b =>
                 {
                     b.HasOne("TallerIDWM_Backend.Src.Models.Product", "Product")
@@ -426,6 +576,16 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Basket", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Product", b =>
