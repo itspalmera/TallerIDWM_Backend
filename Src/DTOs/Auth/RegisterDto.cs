@@ -22,6 +22,8 @@ namespace TallerIDWM_Backend.Src.DTOs
 
         public required string phone { get; set; }
 
+        public required DateOnly birthDate { get; set; }
+
         [Required(ErrorMessage = "La contraseña es obligatoria.")]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]|\\:;\""<>,.?/~`]).+$",

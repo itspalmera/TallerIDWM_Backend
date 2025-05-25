@@ -32,34 +32,55 @@ namespace TallerIDWM_Backend.Src.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(new ApiResponse<string>(false, "Datos inválidos", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
-
-                var user = UserMapper.RegisterToUser(newUser);
-                if (string.IsNullOrEmpty(newUser.password) || string.IsNullOrEmpty(newUser.confirmPassword))
                 {
-                    return BadRequest(new ApiResponse<string>(false, "La contraseña y la confirmación son requeridas"));
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    return BadRequest(new ApiResponse<string>(
+                        false,
+                        "Datos inválidos",
+                        null,
+                        errors));
                 }
 
+                if (string.IsNullOrWhiteSpace(newUser.password) || string.IsNullOrWhiteSpace(newUser.confirmPassword))
+                    return BadRequest(new ApiResponse<string>(false, "La contraseña y la confirmación son requeridas"));
+
+                if (newUser.password != newUser.confirmPassword)
+                    return BadRequest(new ApiResponse<string>(false, "Las contraseñas no coinciden"));
+
+                var existingUser = await _userManager.FindByEmailAsync(newUser.email);
+                if (existingUser != null)
+                    return Conflict(new ApiResponse<string>(false, "Ya existe una cuenta con este correo electrónico"));
+
+                var user = UserMapper.RegisterToUser(newUser);
                 var createUser = await _userManager.CreateAsync(user, newUser.password);
 
                 if (!createUser.Succeeded)
                 {
-                    return BadRequest(new ApiResponse<string>(false, "Error al crear el usuario", null, createUser.Errors.Select(e => e.Description).ToList()));
+                    var identityErrors = createUser.Errors.Select(e => e.Description).ToList();
+                    return BadRequest(new ApiResponse<string>(
+                        false,
+                        "Error al crear el usuario",
+                        null,
+                        identityErrors));
                 }
 
-                var roleUser = await _userManager.AddToRoleAsync(user, "User");
-                if (!roleUser.Succeeded)
+                var roleResult = await _userManager.AddToRoleAsync(user, "User");
+                if (!roleResult.Succeeded)
                 {
-                    return StatusCode(500, new ApiResponse<string>(false, "Error al asignar el rol", null, roleUser.Errors.Select(e => e.Description).ToList()));
+                    var roleErrors = roleResult.Errors.Select(e => e.Description).ToList();
+                    return StatusCode(500, new ApiResponse<string>(
+                        false,
+                        "Error al asignar el rol al usuario",
+                        null,
+                        roleErrors));
                 }
 
-                var role = await _userManager.GetRolesAsync(user);
-                var roleName = role.FirstOrDefault() ?? "User";
-
-                var token = _tokenService.GenerateToken(user, roleName);
-                var userDto = UserMapper.UserToAuthenticatedDto(user, token);
-
-                return Ok(new ApiResponse<AuthenticatedUserDto>(true, "Usuario registrado exitosamente", userDto));
+                var userDto = UserMapper.UserToNewUserDto(user);
+                return Ok(new ApiResponse<NewUserDto>(true, "Usuario registrado exitosamente", userDto));
             }
             catch (Exception ex)
             {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using TallerIDWM_Backend.Src.Data;
@@ -59,7 +60,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
         // Obtener todos los productos en vista de administrador
         [HttpGet("admin")]
-        // [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ApiResponse<IEnumerable<ProductDtoAdmin>>>> GetAllProducts([FromQuery] ProductParams productParams)
         {
             _logger.LogInformation("Solicitud para obtener productos (vista admin) recibida. Parámetros: {@ProductParams}", productParams);
@@ -117,7 +118,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         }
 
         [HttpPost]
-        // Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> AddProduct([FromForm] CreateProductDto createProductDto)
         {
             _logger.LogInformation("Solicitud para agregar producto recibida. Título: {Title}", createProductDto.Title);
@@ -165,7 +166,7 @@ namespace TallerIDWM_Backend.Src.Controllers
         }
 
         [HttpDelete("{id}")]
-        // [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ApiResponse<ProductDtoAdmin>>> RemoveProduct(int id)
         {
             _logger.LogInformation("Solicitud para eliminar producto recibida. ID: {Id}", id);
