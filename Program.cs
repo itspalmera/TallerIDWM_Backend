@@ -32,7 +32,7 @@ try
     builder.Services.AddScoped<ITokenServices, TokenService>();
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
     builder.Services.AddScoped<IPhotoService, PhotoService>();
-    
+
     builder.Services.AddScoped<UnitOfWork>();
 
     builder.Services.AddIdentity<User, IdentityRole>(options =>
