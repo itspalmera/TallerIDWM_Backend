@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace TallerIDWM_Backend.Src.DTOs
-{    public class NewUserDto
+{
+    public class NewUserDto
     {
         public string FirstName { get; set; } = string.Empty;
 

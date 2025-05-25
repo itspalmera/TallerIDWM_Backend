@@ -65,7 +65,8 @@ namespace TallerIDWM_Backend.Src.Controller
         [HttpGet("search")]
         public async Task<ActionResult<ApiResponse<UserDto>>> GetById([FromBody] UserSearchDto search)
         {
-            if (string.IsNullOrEmpty(search.email) && string.IsNullOrEmpty(search.name)){
+            if (string.IsNullOrEmpty(search.email) && string.IsNullOrEmpty(search.name))
+            {
                 return BadRequest(new ApiResponse<string>(false, "Se requiere un email o nombre para buscar el usuario"));
             }
 

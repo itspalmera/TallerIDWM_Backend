@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace TallerIDWM_Backend.Src.Data
 {
-   public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
+    public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
     {
         public DataContext CreateDbContext(string[] args)
         {
@@ -21,6 +21,6 @@ namespace TallerIDWM_Backend.Src.Data
             optionsBuilder.UseSqlite(config.GetConnectionString("DefaultConnection"));
 
             return new DataContext(optionsBuilder.Options);
-        }
-    }
+        }
+    }
 }
