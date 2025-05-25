@@ -10,10 +10,10 @@ using Serilog;
 
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.Interfaces;
+using TallerIDWM_Backend.Src.Middleware;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.Repository;
 using TallerIDWM_Backend.Src.Services;
-using TallerIDWM_Backend.Src.Middleware;
 
 Log.Logger = new LoggerConfiguration()
 
