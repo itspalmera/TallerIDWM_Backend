@@ -13,6 +13,7 @@ using TallerIDWM_Backend.Src.Interfaces;
 using TallerIDWM_Backend.Src.Models;
 using TallerIDWM_Backend.Src.Repository;
 using TallerIDWM_Backend.Src.Services;
+using TallerIDWM_Backend.Src.Middleware;
 
 Log.Logger = new LoggerConfiguration()
 
@@ -23,13 +24,15 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
 
+    builder.Services.AddTransient<ExceptionMIddleware>();
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
     builder.Services.AddScoped<IBasketRepository, BasketRepository>();
     builder.Services.AddScoped<ITokenServices, TokenService>();
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
+    builder.Services.AddScoped<IPhotoService, PhotoService>();
+    
     builder.Services.AddScoped<UnitOfWork>();
 
     builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -110,6 +113,8 @@ try
         await DataSeeder.InitDb(app);
     }
 
+    app.UseMiddleware<ExceptionMIddleware>();
+    app.UseMiddleware<ExceptionMIddleware>();
     app.UseCors("DefaultCorsPolicy");
     app.MapControllers();
     app.UseAuthentication();

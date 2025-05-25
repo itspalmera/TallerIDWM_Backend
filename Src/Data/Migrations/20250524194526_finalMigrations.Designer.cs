@@ -11,8 +11,8 @@ using TallerIDWM_Backend.Src.Data;
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250519014654_userAuth")]
-    partial class userAuth
+    [Migration("20250524194526_finalMigrations")]
+    partial class finalMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,11 +245,11 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ShippingAddressId")
+                    b.Property<int>("DirectionId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("OrderDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -264,7 +264,7 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ShippingAddressId");
+                    b.HasIndex("DirectionId");
 
                     b.HasIndex("UserId");
 
@@ -539,9 +539,9 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
 
             modelBuilder.Entity("TallerIDWM_Backend.Src.Models.Order", b =>
                 {
-                    b.HasOne("TallerIDWM_Backend.Src.Models.Direction", "ShippingAddress")
+                    b.HasOne("TallerIDWM_Backend.Src.Models.Direction", "Address")
                         .WithMany()
-                        .HasForeignKey("ShippingAddressId")
+                        .HasForeignKey("DirectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -551,7 +551,7 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ShippingAddress");
+                    b.Navigation("Address");
 
                     b.Navigation("User");
                 });

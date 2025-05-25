@@ -29,7 +29,7 @@ namespace TallerIDWM_Backend.Src.Mappers
             {
                 Title = product.Title,
                 Price = product.Price,
-                ImageUrl = product.ProductImages.FirstOrDefault()?.Url ?? string.Empty // Asignar la primera imagen o una cadena vacía si no hay imágenes
+                ImageUrl = product.ProductImages?.Select(img => img.Url).ToArray() ?? Array.Empty<string>() // Asignar todas las URLs de imágenes o un array vacío si no hay imágenes
             };
         }
 

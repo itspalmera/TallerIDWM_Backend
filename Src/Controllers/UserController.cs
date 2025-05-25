@@ -63,14 +63,15 @@ namespace TallerIDWM_Backend.Src.Controller
         //TODO: GET BY EMAIL OR NAME
         [Authorize(Roles = "Admin")]
         [HttpGet("search")]
-        public async Task<ActionResult<ApiResponse<UserDto>>> GetById(string? email, string? name)
+        public async Task<ActionResult<ApiResponse<UserDto>>> GetById([FromBody] UserSearchDto search)
         {
-            if (email == null && name == null)
+            if (string.IsNullOrEmpty(search.email) && string.IsNullOrEmpty(search.name)){
                 return BadRequest(new ApiResponse<string>(false, "Se requiere un email o nombre para buscar el usuario"));
+            }
 
-            if (email is null)
+            if (!string.IsNullOrEmpty(search.name))
             {
-                var user = await _unitOfWork.UserRepository.GetUserByNameAsync(name);
+                var user = await _unitOfWork.UserRepository.GetUserByNameAsync(search.name);
                 if (user == null)
                     return NotFound(new ApiResponse<string>(false, "Usuario no encontrado"));
 
@@ -78,15 +79,15 @@ namespace TallerIDWM_Backend.Src.Controller
                 return Ok(new ApiResponse<UserDto>(true, "Usuario encontrado", dto));
             }
 
-
             else
             {
-                var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(email);
-                if (user == null)
-                    return NotFound(new ApiResponse<string>(false, "Usuario no encontrado (email"));
+                var userByEmail = await _unitOfWork.UserRepository.GetUserByEmailAsync(search.email);
+                if (userByEmail == null)
+                    return NotFound(new ApiResponse<string>(false, "Usuario no encontrado (email)"));
 
-                var dto = UserMapper.UserToUserDto(user);
-                return Ok(new ApiResponse<UserDto>(true, "Usuario encontrado", dto));
+                var dtoByEmail = UserMapper.UserToUserDto(userByEmail);
+                return Ok(new ApiResponse<UserDto>(true, "Usuario encontrado", dtoByEmail));
+
             }
 
 
