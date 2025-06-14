@@ -29,6 +29,8 @@ namespace TallerIDWM_Backend.Src.Mappers
             {
                 Title = product.Title,
                 Price = product.Price,
+                Description = product.Description,
+                Stock = product.Stock,
                 ImageUrl = product.ProductImages?.Select(img => img.Url).ToArray() ?? Array.Empty<string>() // Asignar todas las URLs de imágenes o un array vacío si no hay imágenes
             };
         }

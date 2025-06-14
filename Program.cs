@@ -113,9 +113,8 @@ try
         await DataSeeder.InitDb(app);
     }
 
-    app.UseMiddleware<ExceptionMIddleware>();
-    app.UseMiddleware<ExceptionMIddleware>();
     app.UseCors("DefaultCorsPolicy");
+    app.UseMiddleware<ExceptionMIddleware>();
     app.MapControllers();
     app.UseAuthentication();
     app.UseAuthorization();
