@@ -111,7 +111,7 @@ Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
           "AllowedHeaders": [ "Content-Type", "Authorization"]
       }
   }
-
+}
    ```
    
 
