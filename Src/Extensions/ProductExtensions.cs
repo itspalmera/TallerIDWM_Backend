@@ -43,7 +43,8 @@ namespace TallerIDWM_Backend.Src.Extensions
             {
                 "price" => query.OrderBy(p => p.Price),
                 "priceDesc" => query.OrderByDescending(p => p.Price),
-                _ => query.OrderBy(p => p.Title)
+                "nameDesc" => query.OrderByDescending(p => p.Title),
+                _ => query.OrderBy(p => p.Title),
             };
             return query;
         }
