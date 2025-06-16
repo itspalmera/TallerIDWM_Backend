@@ -33,6 +33,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 Stock = product.Stock,
                 Category = product.Category,
                 Brand = product.Brand,
+                Condition = product.ProductCondition.ToString(),
                 ImageUrl = product.ProductImages?.Select(img => img.Url).ToArray() ?? Array.Empty<string>() // Asignar todas las URLs de imágenes o un array vacío si no hay imágenes
             };
         }

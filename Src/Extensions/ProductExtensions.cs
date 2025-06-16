@@ -9,10 +9,11 @@ namespace TallerIDWM_Backend.Src.Extensions
 {
     public static class ProductExtensions
     {
-        public static IQueryable<Product> Filter(this IQueryable<Product> query, string? brands, string? categories)
+        public static IQueryable<Product> Filter(this IQueryable<Product> query, string? brands, string? categories, string? conditions)
         {
             var brandList = new List<string>();
             var categoryList = new List<string>();
+            var conditionList = new List<string>();
 
             if (!string.IsNullOrWhiteSpace(brands))
             {
@@ -24,8 +25,14 @@ namespace TallerIDWM_Backend.Src.Extensions
                 categoryList.AddRange(categories.ToLower().Split(","));
             }
 
+            if (!string.IsNullOrWhiteSpace(conditions))
+            {
+                conditionList.AddRange(conditions.ToLower().Split(","));
+            }
+
             query = query.Where(p => brandList.Count == 0 || brandList.Contains(p.Brand.ToLower()));
             query = query.Where(p => categoryList.Count == 0 || categoryList.Contains(p.Category.ToLower()));
+            query = query.Where(p => conditionList.Count == 0 || conditionList.Contains(p.ProductCondition.ToString().ToLower()));
 
             return query;
         }
