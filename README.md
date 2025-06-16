@@ -106,7 +106,7 @@ Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
         "ApiSecret": "msaDP0V_-sH4pMsYv-xOijpd2GQ"
       },
       "CorsSettings": {
-          "AllowedOrigins": [ "https://localhost:7188"],
+          "AllowedOrigins": [ "https://localhost:7188", "http://localhost:3000" ],
           "AllowedMethods": [ "GET", "POST", "PUT", "DELETE" ],
           "AllowedHeaders": [ "Content-Type", "Authorization"]
       }
