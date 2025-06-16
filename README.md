@@ -110,8 +110,7 @@ Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
           "AllowedMethods": [ "GET", "POST", "PUT", "DELETE" ],
           "AllowedHeaders": [ "Content-Type", "Authorization"]
       }
-  }
-}
+   }   
    ```
    
 
