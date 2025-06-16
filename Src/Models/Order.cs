@@ -9,18 +9,25 @@ namespace TallerIDWM_Backend.Src.Models
     {
         public int Id { get; set; }
 
+        // Relación con Usuario
         public string UserId { get; set; } = string.Empty;
         public User User { get; set; } = null!;
 
-        // NUEVO: FK a ShippingAddress
-        public int ShippingAddressId { get; set; }
-        public Direction Address { get; set; } = null!;
+        // Relación con Dirección de envío (la única FK hacia Direction)
+        public int DirectionId { get; set; }
+        public Direction Address { get; set; } = null!; // Navigation property
 
-        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        // Fecha de la orden
+        public DateOnly OrderDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        // Estado de la orden
         public string Status { get; set; } = "Creado";
 
+        // Total congelado
         public decimal Total { get; set; }
 
+        // Detalles de productos
         public List<OrderItem> Items { get; set; } = new();
+
     }
 }

@@ -20,7 +20,7 @@ namespace TallerIDWM_Backend.Src.Mappers
             return new Order
             {
                 UserId = userId,
-                ShippingAddressId = directionId,
+                DirectionId = directionId,
                 Total = basket.Items.Sum(i => i.Quantity * i.Product.Price),
                 Items = basket.Items.Select(i => new OrderItem
                 {
@@ -37,7 +37,7 @@ namespace TallerIDWM_Backend.Src.Mappers
             return new OrderDto
             {
                 id = order.Id,
-                createdAt = order.OrderDate,
+                createdAt = order.OrderDate.ToDateTime(TimeOnly.MinValue),
                 address = order.Address,
                 total = (int)Math.Floor(order.Total),
                 items = order.Items.Select(i => new OrderItemDto
@@ -56,7 +56,7 @@ namespace TallerIDWM_Backend.Src.Mappers
             return new OrderSummaryDto
             {
                 Id = order.Id,
-                CreatedAt = order.OrderDate,
+                CreatedAt = order.OrderDate.ToDateTime(TimeOnly.MinValue),
                 Total = (int)Math.Floor(order.Total)
             };
         }

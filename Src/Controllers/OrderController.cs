@@ -30,6 +30,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
         //TODO: CREATE ORDER
         [HttpPost]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<ApiResponse<OrderDto>>> CreateOrder()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -37,6 +38,8 @@ namespace TallerIDWM_Backend.Src.Controllers
                 return Unauthorized(new ApiResponse<string>(false, "Usuario no autenticado"));
 
             var address = await _unitOfWork.DirectionRepository.GetByUserIdAsync(userId);
+            _logger.LogInformation($"Dirección obtenida: {address}");
+            _logger.LogInformation("Shippings addres id {addressId}", address?.Id);
             if (address == null)
                 return BadRequest(new ApiResponse<string>(false, "No tienes una dirección registrada. Por favor agrégala antes de comprar."));
 
@@ -51,18 +54,18 @@ namespace TallerIDWM_Backend.Src.Controllers
             var order = OrderMapper.FromBasket(basket, userId, address.Id);
 
             // Reducir el stock
-            foreach (var item in order.Items)
+            foreach (var item in basket.Items)
             {
-                var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(item.ProductId);
-                if (product != null)
-                {
-                    product.Stock -= item.Quantity;
+                if (item.Product == null)
+                    return BadRequest(new ApiResponse<string>(false, $"Producto no disponible en el carrito"));
 
-                    if (product.Stock < 0)
-                        return BadRequest(new ApiResponse<string>(false, $"No hay suficiente stock para el producto {product.Title}"));
-                    if (product.Stock == 0)
-                        product.IsVisible = false;
-                }
+                var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(item.Product.Id);
+
+                if (product == null)
+                    return BadRequest(new ApiResponse<string>(false, $"El producto '{item.Product.Title}' ya no existe"));
+
+                if (product.Stock < item.Quantity)
+                    return BadRequest(new ApiResponse<string>(false, $"No hay suficiente stock para el producto '{product.Title}'"));
             }
 
             await _unitOfWork.OrderRepository.CreateOrderAsync(order);
@@ -95,6 +98,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
         //TODO: GET ORDER BY ID
         [HttpGet("{id}")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<ApiResponse<OrderDto>>> GetOrderById(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

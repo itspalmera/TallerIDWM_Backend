@@ -15,11 +15,12 @@ namespace TallerIDWM_Backend.Src.Mappers
         public static User RegisterToUser(RegisterDto dto) =>
             new()
             {
-                UserName = dto.name,
+                UserName = dto.email,
                 Email = dto.email,
                 FirstName = dto.name,
                 LastName = dto.lastName,
                 PhoneNumber = dto.phone,
+                BirthDate = dto.birthDate,
                 Registered = DateOnly.FromDateTime(DateTime.UtcNow),
                 Active = true,
                 Direction = new Direction
@@ -40,6 +41,7 @@ namespace TallerIDWM_Backend.Src.Mappers
                 lastName = user.LastName,
                 email = user.Email ?? string.Empty,
                 phone = user.PhoneNumber ?? string.Empty,
+                BirthDate = user.BirthDate,
                 street = user.Direction?.Street,
                 number = user.Direction?.Number,
                 commune = user.Direction?.Commune,
@@ -87,5 +89,15 @@ namespace TallerIDWM_Backend.Src.Mappers
             if (dto.birthDate.HasValue)
                 user.BirthDate = dto.birthDate.Value;
         }
+
+
+
+        public static NewUserDto UserToNewUserDto(User user) =>
+            new()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email ?? string.Empty
+            };
     }
 }

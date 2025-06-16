@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TallerIDWM_Backend.Src.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class userAuth : Migration
+    public partial class finalMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -280,8 +280,8 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    ShippingAddressId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DirectionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: false),
                     Total = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
@@ -295,8 +295,8 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Directions_ShippingAddressId",
-                        column: x => x.ShippingAddressId,
+                        name: "FK_Orders_Directions_DirectionId",
+                        column: x => x.DirectionId,
                         principalTable: "Directions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -393,9 +393,9 @@ namespace TallerIDWM_Backend.Src.Data.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_ShippingAddressId",
+                name: "IX_Orders_DirectionId",
                 table: "Orders",
-                column: "ShippingAddressId");
+                column: "DirectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
