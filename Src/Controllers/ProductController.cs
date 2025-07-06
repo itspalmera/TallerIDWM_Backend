@@ -33,7 +33,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
                 // Se aplican los filtros según los parámetros de consulta
                 query = query.Search(productParams.Search)
-                             .Filter(productParams.Brands, productParams.Categories, productParams.Conditions)
+                             .Filter(productParams.Brands, productParams.Categories, productParams.Conditions, productParams.MinPrice, productParams.MaxPrice)
                              .Sort(productParams.SortBy);
 
                 // Obtener la paginación
@@ -71,7 +71,7 @@ namespace TallerIDWM_Backend.Src.Controllers
 
                 // Se aplican los filtros según los parámetros de consulta
                 query = query.Search(productParams.Search)
-                             .Filter(productParams.Brands, productParams.Categories, productParams.Conditions)
+                             .Filter(productParams.Brands, productParams.Categories, productParams.Conditions, productParams.MinPrice, productParams.MaxPrice)
                              .Sort(productParams.SortBy);
 
                 // Obtener la paginación

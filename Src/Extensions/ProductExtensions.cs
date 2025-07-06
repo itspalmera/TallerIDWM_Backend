@@ -9,7 +9,7 @@ namespace TallerIDWM_Backend.Src.Extensions
 {
     public static class ProductExtensions
     {
-        public static IQueryable<Product> Filter(this IQueryable<Product> query, string? brands, string? categories, string? conditions)
+        public static IQueryable<Product> Filter(this IQueryable<Product> query, string? brands, string? categories, string? conditions, int? minPrice, int? maxPrice)
         {
             var brandList = new List<string>();
             var categoryList = new List<string>();
@@ -28,6 +28,15 @@ namespace TallerIDWM_Backend.Src.Extensions
             if (!string.IsNullOrWhiteSpace(conditions))
             {
                 conditionList.AddRange(conditions.ToLower().Split(","));
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= minPrice.Value);
+            }
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
             query = query.Where(p => brandList.Count == 0 || brandList.Contains(p.Brand.ToLower()));
