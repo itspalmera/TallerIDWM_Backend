@@ -27,6 +27,7 @@ namespace TallerIDWM_Backend.Src.Mappers
         {
             return new ProductDto
             {
+                Id = product.Id,
                 Title = product.Title,
                 Price = product.Price,
                 Description = product.Description,

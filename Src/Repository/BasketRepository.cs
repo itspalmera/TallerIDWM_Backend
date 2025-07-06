@@ -14,6 +14,7 @@ namespace TallerIDWM_Backend.Src.Repository
             return await _dataContext.Baskets
                 .Include(b => b.Items)
                 .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(b => b.BasketId == basketId);
         }
         public Basket CreateBasket(string basketId)

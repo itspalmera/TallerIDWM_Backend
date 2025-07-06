@@ -6,5 +6,6 @@ namespace TallerIDWM_Backend.Src.DTOs
     {
         public required string BasketId { get; set; } = null!;
         public List<BasketItemDto> Items { get; set; } = [];
+        public double TotalPrice { get; set; }
     }
 }

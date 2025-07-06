@@ -11,7 +11,7 @@ namespace TallerIDWM_Backend.Src.Models
         public string Street { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
         public string Region { get; set; } = string.Empty;
-        public string Commune { get; set; } = string.Empty;
+        public string Commune { get; set; } = string.Empty; 
         public string PostalCode { get; set; } = string.Empty;
 
         // Relación uno a uno con User
