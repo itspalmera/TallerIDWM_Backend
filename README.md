@@ -107,7 +107,7 @@ Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
       },
       "CorsSettings": {
           "AllowedOrigins": [ "https://localhost:7188", "http://localhost:3000" ],
-          "AllowedMethods": [ "GET", "POST", "PUT", "DELETE" ],
+          "AllowedMethods": [ "GET", "POST", "PUT", "DELETE", "PATCH"  ],
           "AllowedHeaders": [ "Content-Type", "Authorization", "Pagination" ]
       }
    }   
