@@ -20,7 +20,9 @@ namespace TallerIDWM_Backend.Src.Mappers
                 {
                     ProductId = item.ProductId,
                     Name = item.Product.Title,
-                    ImageUrl = item.Product.ProductImages.FirstOrDefault()?.Url ?? string.Empty,
+                    ImageUrl = item.Product.ProductImages
+                                    .Select(img => img.Url)
+                                    .ToArray(),
                     Price = item.Product.Price,
                     Quantity = item.Quantity,
                     TotalPrice = item.Quantity * item.Product.Price
