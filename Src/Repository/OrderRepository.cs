@@ -21,10 +21,17 @@ namespace TallerIDWM_Backend.Src.Repository
             await _context.Orders.AddAsync(order);
         }
 
+        public IQueryable<Order> GetQueryableOrdersByUserId(string userId)
+        {
+            return _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.Address)
+                .Include(o => o.Items);
+        }
+
         public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
         {
             return await _context.Orders
-                .Include(o => o.Items)
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
@@ -48,7 +55,7 @@ namespace TallerIDWM_Backend.Src.Repository
 
         public IQueryable<Order> GetOrdersQueryable()
         {
-            return _context.Orders.Include(u => u.Address).AsQueryable();
+            return _context.Orders.Include(u => u.Address).Include(o => o.Items).AsQueryable();
         }
     }
 }

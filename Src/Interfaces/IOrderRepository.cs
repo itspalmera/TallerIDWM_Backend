@@ -14,5 +14,6 @@ namespace TallerIDWM_Backend.Src.Interfaces
         Task<List<Order>> GetOrdersByUserIdAsync(string userId);
         Task<Order?> GetOrderByIdAsync(int orderId, string userId);
         Task<List<Order>> GetAllOrdersAsync();
+        IQueryable<Order> GetQueryableOrdersByUserId(string userId);
     }
 }

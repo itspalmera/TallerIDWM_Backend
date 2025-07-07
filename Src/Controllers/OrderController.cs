@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using TallerIDWM_Backend.Src.Data;
 using TallerIDWM_Backend.Src.DTOs;
+using TallerIDWM_Backend.Src.Extensions;
 using TallerIDWM_Backend.Src.Helpers;
 using TallerIDWM_Backend.Src.Mappers;
 using TallerIDWM_Backend.Src.Models;
@@ -25,8 +26,6 @@ namespace TallerIDWM_Backend.Src.Controllers
     {
         private readonly UnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<OrderController> _logger = logger;
-
-
 
         //TODO: CREATE ORDER
         [HttpPost]
@@ -76,25 +75,34 @@ namespace TallerIDWM_Backend.Src.Controllers
             return Ok(new ApiResponse<OrderDto>(true, "Pedido realizado correctamente", OrderMapper.ToOrderDto(order)));
         }
 
-
-
         //TODO: GET ORDERS
         [Authorize(Roles = "User")]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<OrderSummaryDto>>>> GetMyOrders([FromQuery] OrderParams orderParams)
+        public ActionResult<ApiResponse<IEnumerable<OrderDto>>> GetMyOrders([FromQuery] OrderParams orderParams)
         {
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId is null)
                 return Unauthorized(new ApiResponse<string>(false, "Usuario no autenticado"));
 
-            var orders = await _unitOfWork.OrderRepository.GetOrdersByUserIdAsync(userId);
-            var mapped = orders.Select(OrderMapper.ToSummaryDto).ToList();
+            var query = _unitOfWork.OrderRepository.GetQueryableOrdersByUserId(userId);
 
-            return Ok(new ApiResponse<IEnumerable<OrderSummaryDto>>(true, "Historial de pedidos obtenido", mapped));
+            query = query
+                .Search(orderParams.Price)
+                .FilterByDate(orderParams.RegisteredFrom, orderParams.RegisteredTo)
+                .Sort(orderParams.OrderBy);
+
+            // Aquí mapea a OrderDto
+            var orders = query.ToList();
+            var mapped = orders.Select(OrderMapper.ToOrderDto).ToList();
+
+            var response = new ApiResponse<IEnumerable<OrderDto>>(
+                true,
+                "Historial de pedidos obtenido",
+                mapped
+            );
+
+            return Ok(response);
         }
-
-
 
         //TODO: GET ORDER BY ID
         [HttpGet("{id}")]
