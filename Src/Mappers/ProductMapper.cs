@@ -43,6 +43,7 @@ namespace TallerIDWM_Backend.Src.Mappers
         {
             return new ProductDtoAdmin
             {
+                Id = product.Id,
                 Title = product.Title,
                 Price = product.Price,
                 Stock = product.Stock,
